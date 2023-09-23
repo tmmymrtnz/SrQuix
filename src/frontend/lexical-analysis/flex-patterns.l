@@ -18,6 +18,7 @@
 
 /* Patrones reutilizables. */
 digit			[0-9]
+character		[A-Za-z]
 endline			[\n]
 whitespace		[ \f\n\r\t\v]
 
@@ -28,7 +29,20 @@ whitespace		[ \f\n\r\t\v]
 <COMMENT>{endline}+							{ IgnoredPatternAction(yytext, yyleng); }
 <COMMENT>"*/"								{ EndCommentPatternAction(); BEGIN(INITIAL); }
 
-"+"											{ return AdditionOperatorPatternAction(yytext); }
+"resistance"								{ return ResistancePatternAction(); }
+"source"									{ return SourcePatternAction(); }
+"inductance"								{ return InductancePatternAction(); }
+"capacitance"								{ return CapacitancePatternAction(); }
+
+","                                         { return ComaPatternAction(); }
+
+"="                                         { return EqualPatternAction(); }
+
+"node"					        			{ return NodePatternAction(); }
+
+">"											{ return GreaterThanPatternAction(); }
+"+"											{ return AdditionOperatorPatternAction(); }
+
 "-"											{ return SubtractionOperatorPatternAction(yytext); }
 "*"											{ return MultiplicationOperatorPatternAction(yytext); }
 "/"											{ return DivisionOperatorPatternAction(yytext); }
@@ -36,7 +50,14 @@ whitespace		[ \f\n\r\t\v]
 "("											{ return OpenParenthesisPatternAction(yytext); }
 ")"											{ return CloseParenthesisPatternAction(yytext); }
 
+"["											{ return OpenBracketPatternAction(); }
+"]"											{ return CloseBracketPatternAction(); }
+
+";"											{ return SemicolonPatternAction(); }
+
 {digit}+									{ return IntegerPatternAction(yytext, yyleng); }
+
+{character}+						    	{ return TextPatternAction(yytext, yyleng); }
 
 {whitespace}+								{ IgnoredPatternAction(yytext, yyleng); }
 

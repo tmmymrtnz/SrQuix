@@ -33,6 +33,72 @@ void EndCommentPatternAction() {
 	LogDebug("[Flex] [COMMENT] EndCommentPatternAction..............................");
 }
 
+token ResistancePatternAction() {
+	LogDebug("[Flex] ResistancePatternAction: 'resistance'.");
+	yylval.token = RESISTANCE;
+	return RESISTANCE;
+}
+
+token SourcePatternAction() {
+	LogDebug("[Flex] SourcePatternAction: 'source'.");
+	yylval.token = SOURCE;
+	return SOURCE;
+}
+
+token InductancePatternAction() {
+	LogDebug("[Flex] InductancePatternAction: 'inductance'.");
+	yylval.token = INDUCTANCE;
+	return INDUCTANCE;
+}
+
+token CapacitancePatternAction() {
+	LogDebug("[Flex] CapacitancePatternAction: 'capacitance'.");
+	yylval.token = CAPACITANCE;
+	return CAPACITANCE;
+}
+
+token ComaPatternAction() {
+	LogDebug("[Flex] ComaTypePatternAction: ','.");
+	yylval.token = COMA;
+	return COMA;
+}
+
+token EqualPatternAction() {
+	LogDebug("[Flex] EqualTypePatternAction: '='.");
+	yylval.token = EQUAL;
+	return EQUAL;
+}
+
+token OpenBracketPatternAction() {
+	LogDebug("[Flex] OpenBracketPatternAction: '['.");
+	yylval.token = OPEN_BRACKET;
+	return OPEN_BRACKET;
+}
+
+token CloseBracketPatternAction() {
+	LogDebug("[Flex] CloseBracketPatternAction: ']'.");
+	yylval.token = CLOSE_BRACKET;
+	return CLOSE_BRACKET;
+}
+
+token NodePatternAction() {
+	LogDebug("[Flex] NodePatternAction: 'node'.");
+	yylval.token = NODE;
+	return NODE;
+}
+
+token SemicolonPatternAction() {
+	LogDebug("[Flex] SemicolonPatternAction: ';'.");
+	yylval.token = SEMICOLON;
+	return SEMICOLON;
+}
+
+token GreaterThanPatternAction() {
+	LogDebug("[Flex] GreaterThanPatternAction: '>'.");
+	yylval.token = GREATER_THAN;
+	return GREATER_THAN;
+}
+
 token AdditionOperatorPatternAction() {
 	LogDebug("[Flex] AdditionOperatorPatternAction: '+'.");
 	yylval.token = ADD;
@@ -57,6 +123,14 @@ token IntegerPatternAction(const char * lexeme, const int length) {
 	yylval.integer = atoi(lexemeCopy);
 	free(lexemeCopy);
 	return INTEGER;
+}
+
+token TextPatternAction(const char * lexeme, const int length) {
+	LogDebug("[Flex] TextPatternAction: '%s' (length = %d).", lexeme, length);
+	char * lexemeCopy = copyLexeme(lexeme, length);
+	yylval.text = lexemeCopy;
+	free(lexemeCopy);
+	return TEXT;
 }
 
 token MultiplicationOperatorPatternAction() {
