@@ -19,6 +19,7 @@
 /* Patrones reutilizables. */
 digit			[0-9]
 character		[A-Za-z]
+text            [A-Za-z0-9]
 endline			[\n]
 whitespace		[ \f\n\r\t\v]
 
@@ -28,6 +29,10 @@ whitespace		[ \f\n\r\t\v]
 <COMMENT>.									{ IgnoredPatternAction(yytext, yyleng); }
 <COMMENT>{endline}+							{ IgnoredPatternAction(yytext, yyleng); }
 <COMMENT>"*/"								{ EndCommentPatternAction(); BEGIN(INITIAL); }
+
+"showName"						    		{ return ShowNamePatternAction(); }
+"true"						        		{ return TruePatternAction(); }
+"false"					        			{ return FalsePatternAction(); }
 
 "resistance"								{ return ResistancePatternAction(); }
 "source"									{ return SourcePatternAction(); }
@@ -57,7 +62,7 @@ whitespace		[ \f\n\r\t\v]
 
 {digit}+									{ return IntegerPatternAction(yytext, yyleng); }
 
-{character}+						    	{ return TextPatternAction(yytext, yyleng); }
+{text}+	    			                	{ return TextPatternAction(yytext, yyleng); }
 
 {whitespace}+								{ IgnoredPatternAction(yytext, yyleng); }
 

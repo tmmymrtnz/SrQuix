@@ -20,14 +20,18 @@
 	int expression;
 	int factor;
 	int constant;
-	// TODO no terminales
+
+	int declarations;
 	int concat;
 	int end_of_line;
-	int declare;
+	int declare_type;
 	int coma_text;
-	int declare_values;
-	int coma_int;
 	int type;
+	int boolean;
+	int declare_nodes;
+
+	int matching_params;
+	int matching_params_rec;
 	
 	int params;
 	int coma_parameter;
@@ -57,6 +61,11 @@
 
 %token <token> ADD
 %token <token> GREATER_THAN
+
+%token <token> SHOW_NAME
+
+%token <token> TRUE
+%token <token> FALSE
 
 %token <token> SUB
 %token <token> MUL
@@ -89,29 +98,27 @@
 
 %%
 
-program: concat														{ 0; }
-	| declare														{ 0; }
+program: declarations												{ 0; }
 	| expression													{ $$ = ProgramGrammarAction($1); }
 	;
 
-expression: expression[left] ADD expression[right]					{ $$ = AdditionExpressionGrammarAction($left, $right); }
-	| expression[left] SUB expression[right]						{ $$ = SubtractionExpressionGrammarAction($left, $right); }
-	| expression[left] MUL expression[right]						{ $$ = MultiplicationExpressionGrammarAction($left, $right); }
-	| expression[left] DIV expression[right]						{ $$ = DivisionExpressionGrammarAction($left, $right); }
-	| factor														{ $$ = FactorExpressionGrammarAction($1); }
+declarations: declare_type end_of_line declarations					{ 0; }
+	| declare_nodes end_of_line declarations						{ 0; }
+	| concat end_of_line declarations								{ 0; }
+	|																{ 0; }
 	;
 
-declare: type TEXT coma_text										{ 0; }
-	| type TEXT coma_text EQUAL declare_values						{ 0; }
+declare_type: type TEXT coma_text									{ 0; }
+	| type matching_params											{ 0; }
 
 coma_text: COMA TEXT coma_text										{ 0; }
 	| 																{ 0; }
 	;
 
-declare_values: OPEN_BRACKET coma_int CLOSE_BRACKET end_of_line		{ 0; }
+matching_params: TEXT matching_params_rec INTEGER CLOSE_BRACKET params		{ 0; }
 
-coma_int: INTEGER COMA coma_int										{ 0; }
-	| INTEGER														{ 0; }
+matching_params_rec: COMA TEXT matching_params_rec INTEGER COMA		{ 0; }
+	|  EQUAL OPEN_BRACKET											{ 0; }
 	;
 
 type: RESISTANCE													{ 0; }
@@ -128,15 +135,33 @@ coma_parameter: parameter COMA coma_parameter						{ 0; }
 	| parameter														{ 0; }
 	;
 
-parameter: SHOWNAME EQUAL BOOLEAN									{ 0; }
+parameter: SHOW_NAME EQUAL boolean									{ 0; }
 	;
+
+boolean: TRUE														{ 0; }
+	| FALSE															{ 0; }
+	;
+
+declare_nodes: NODE TEXT coma_text									{ 0; }
 
 concat: TEXT GREATER_THAN concat									{ 0; }
 	| TEXT ADD concat												{ 0; }
-	| TEXT end_of_line												{ 0; }
+	| TEXT 															{ 0; }
 	;
 
 end_of_line: SEMICOLON												{ 0; }
+	;
+
+
+
+
+
+
+expression: expression[left] ADD expression[right]					{ $$ = AdditionExpressionGrammarAction($left, $right); }
+	| expression[left] SUB expression[right]						{ $$ = SubtractionExpressionGrammarAction($left, $right); }
+	| expression[left] MUL expression[right]						{ $$ = MultiplicationExpressionGrammarAction($left, $right); }
+	| expression[left] DIV expression[right]						{ $$ = DivisionExpressionGrammarAction($left, $right); }
+	| factor														{ $$ = FactorExpressionGrammarAction($1); }
 	;
 
 factor: OPEN_PARENTHESIS expression CLOSE_PARENTHESIS				{ $$ = ExpressionFactorGrammarAction($2); }

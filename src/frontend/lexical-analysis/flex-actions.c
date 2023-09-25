@@ -105,6 +105,24 @@ token AdditionOperatorPatternAction() {
 	return ADD;
 }
 
+token ShowNamePatternAction() {
+	LogDebug("[Flex] ShowNamePatternAction: 'showName'.");
+	yylval.token = SHOW_NAME;
+	return SHOW_NAME;
+}
+
+token TruePatternAction() {
+	LogDebug("[Flex] TruePatternAction: 'true'.");
+	yylval.token = TRUE;
+	return TRUE;
+}
+
+token FalsePatternAction() {
+	LogDebug("[Flex] FalsePatternAction: 'false'.");
+	yylval.token = FALSE;
+	return FALSE;
+}
+
 token CloseParenthesisPatternAction() {
 	LogDebug("[Flex] CloseParenthesisPatternAction: ')'.");
 	yylval.token = CLOSE_PARENTHESIS;

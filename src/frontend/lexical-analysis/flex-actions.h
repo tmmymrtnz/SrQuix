@@ -42,6 +42,10 @@ token NodePatternAction();
 token GreaterThanPatternAction();
 token AdditionOperatorPatternAction();
 
+token ShowNamePatternAction();
+token TruePatternAction();
+token FalsePatternAction();
+
 token TextPatternAction(const char * lexeme, const int length);
 
 token CloseParenthesisPatternAction();
