@@ -34,10 +34,13 @@ whitespace		[ \f\n\r\t\v]
 "true"						        		{ return TruePatternAction(); }
 "false"					        			{ return FalsePatternAction(); }
 
-"resistance"								{ return ResistancePatternAction(); }
-"source"									{ return SourcePatternAction(); }
-"inductance"								{ return InductancePatternAction(); }
-"capacitance"								{ return CapacitancePatternAction(); }
+"resistor"							    	{ return ResistorPatternAction(); }
+"battery"									{ return BatteryPatternAction(); }
+"inductor"								{ return InductorPatternAction(); }
+"capacitor"								{ return CapacitorPatternAction(); }
+"ammeter"                                { return AmmeterPatternAction(); }
+"voltmeter"                              { return VoltmeterPatternAction(); }
+"ohmmeter"                               { return OhmmeterPatternAction(); }
 
 ","                                         { return ComaPatternAction(); }
 

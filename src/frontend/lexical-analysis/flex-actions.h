@@ -24,10 +24,14 @@ void BeginCommentPatternAction();
 void EndCommentPatternAction();
 
 // Patrones terminales del lenguaje diseñado.
-token ResistancePatternAction();
-token SourcePatternAction();
-token InductancePatternAction();
-token CapacitancePatternAction();
+token resistorPatternAction();
+token BatteryPatternAction();
+token InductorPatternAction();
+token CapacitorPatternAction();
+token AmmeterPatternAction();
+token VoltmeterPatternAction();
+token OhmmeterPatternAction();
+token SinglePhaseVolPatternAction();
 
 token ComaPatternAction();
 token EqualPatternAction();

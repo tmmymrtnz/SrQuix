@@ -47,10 +47,14 @@
 %token <token> ERROR
 
 // IDs y tipos de los tokens terminales generados desde Flex.
-%token <token> RESISTANCE
-%token <token> SOURCE
-%token <token> INDUCTANCE
-%token <token> CAPACITANCE
+%token <token> RESISTOR
+%token <token> BATTERY
+%token <token> INDUCTOR
+%token <token> CAPACITOR
+%token <token> VOLTMETER
+%token <token> OHMMETER
+%token <token> AMMETER
+%token <token> SINGLEPHASEVOL
 
 %token <token> COMA
 %token <token> EQUAL
@@ -121,10 +125,14 @@ matching_params_rec: COMA TEXT matching_params_rec INTEGER COMA		{ 0; }
 	|  EQUAL OPEN_BRACKET											{ 0; }
 	;
 
-type: RESISTANCE													{ 0; }
-	| SOURCE														{ 0; }
-	| INDUCTANCE													{ 0; }
-	| CAPACITANCE													{ 0; }
+type: RESISTOR														{ 0; }
+	| BATTERY														{ 0; }
+	| INDUCTOR														{ 0; }
+	| CAPACITOR														{ 0; }
+	| AMMETER														{ 0; }
+	| VOLTMETER														{ 0; }
+	| OHMMETER														{ 0; }
+	| SINGLEPHASEVOL												{ 0; }
 	;
 
 params: OPEN_PARENTHESIS coma_parameter CLOSE_PARENTHESIS			{ 0; }

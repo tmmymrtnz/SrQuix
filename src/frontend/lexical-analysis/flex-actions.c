@@ -33,28 +33,28 @@ void EndCommentPatternAction() {
 	LogDebug("[Flex] [COMMENT] EndCommentPatternAction..............................");
 }
 
-token ResistancePatternAction() {
-	LogDebug("[Flex] ResistancePatternAction: 'resistance'.");
-	yylval.token = RESISTANCE;
-	return RESISTANCE;
+token ResistorPatternAction() {
+	LogDebug("[Flex] ResistorPatternAction: 'resistor'.");
+	yylval.token = RESISTOR;
+	return RESISTOR;
 }
 
-token SourcePatternAction() {
-	LogDebug("[Flex] SourcePatternAction: 'source'.");
-	yylval.token = SOURCE;
-	return SOURCE;
+token BatteryPatternAction() {
+	LogDebug("[Flex] BatteryPatternAction: 'battery'.");
+	yylval.token = BATTERY;
+	return BATTERY;
 }
 
-token InductancePatternAction() {
-	LogDebug("[Flex] InductancePatternAction: 'inductance'.");
-	yylval.token = INDUCTANCE;
-	return INDUCTANCE;
+token InductorPatternAction() {
+	LogDebug("[Flex] InductorPatternAction: 'inductor'.");
+	yylval.token = INDUCTOR;
+	return INDUCTOR;
 }
 
-token CapacitancePatternAction() {
-	LogDebug("[Flex] CapacitancePatternAction: 'capacitance'.");
-	yylval.token = CAPACITANCE;
-	return CAPACITANCE;
+token CapacitorPatternAction() {
+	LogDebug("[Flex] CapacitorcePatternAction: 'capacitor'.");
+	yylval.token = CAPACITOR;
+	return CAPACITOR;
 }
 
 token ComaPatternAction() {
@@ -161,6 +161,30 @@ token OpenParenthesisPatternAction() {
 	LogDebug("[Flex] OpenParenthesisPatternAction: '('.");
 	yylval.token = OPEN_PARENTHESIS;
 	return OPEN_PARENTHESIS;
+}
+
+token AmmeterPatternAction() {
+	LogDebug("[Flex] AmmeterPatternAction: 'ammeter'.");
+	yylval.token = AMMETER;
+	return AMMETER;
+}
+
+token VoltmeterPatternAction() {
+	LogDebug("[Flex] VoltmeterPatternAction: 'voltmeter'.");
+	yylval.token = VOLTMETER;
+	return VOLTMETER;
+}
+
+token OhmmeterPatternAction() {
+	LogDebug("[Flex] OhmmeterPatternAction: 'ohmmeter'.");
+	yylval.token = OHMMETER;
+	return OHMMETER;
+}
+
+token SinglePhaseVolPatternAction() {
+	LogDebug("[Flex] SinglePhaseVolPatternAction: 'node'.");
+	yylval.token = SINGLEPHASEVOL;
+	return SINGLEPHASEVOL;
 }
 
 token SubtractionOperatorPatternAction() {
