@@ -21,7 +21,7 @@
 	int factor;
 	int constant;
 
-	int declarations;
+	int declaration;
 	int concat;
 	int end_of_line;
 	int declare_type;
@@ -87,6 +87,17 @@
 // Tipos de dato para los no-terminales generados desde Bison.
 %type <program> program
 %type <expression> expression
+%type <declaration> declaration
+%type <declare_type> declare_type
+%type <coma_text> coma_text
+%type <matching_params> matching_params
+%type <matching_params_rec> matching_params_rec
+%type <type> type
+%type <params> params
+%type <coma_parameter> coma_parameter
+%type <parameter> parameter
+%type <boolean> boolean
+%type <declare_nodes> declare_nodes
 %type <factor> factor
 %type <constant> constant
 
@@ -102,62 +113,62 @@
 
 %%
 
-program: declarations												{ 0; }
+program: declaration												{ $$ = ProgramGrammarAction($1); }
 	| expression													{ $$ = ProgramGrammarAction($1); }
 	;
 
-declarations: declare_type end_of_line declarations					{ 0; }
-	| declare_nodes end_of_line declarations						{ 0; }
-	| concat end_of_line declarations								{ 0; }
-	|																{ 0; }
+declaration: declare_type end_of_line declaration					{ $$=0; }
+	| declare_nodes end_of_line declaration						{ $$=0; }
+	| concat end_of_line declaration								{ $$=0; }
+	|																{ $$=0; }
 	;
 
-declare_type: type TEXT coma_text									{ 0; }
-	| type matching_params											{ 0; }
+declare_type: type TEXT coma_text									{ $$=0; }
+	| type matching_params											{ $$=0; }
 
-coma_text: COMA TEXT coma_text										{ 0; }
-	| 																{ 0; }
+coma_text: COMA TEXT coma_text										{ $$=0; }
+	| 																{ $$=0; }
 	;
 
-matching_params: TEXT matching_params_rec INTEGER CLOSE_BRACKET params		{ 0; }
+matching_params: TEXT matching_params_rec INTEGER CLOSE_BRACKET params		{ $$=0; }
 
-matching_params_rec: COMA TEXT matching_params_rec INTEGER COMA		{ 0; }
-	|  EQUAL OPEN_BRACKET											{ 0; }
+matching_params_rec: COMA TEXT matching_params_rec INTEGER COMA		{ $$=0; }
+	|  EQUAL OPEN_BRACKET											{ $$=0; }
 	;
 
-type: RESISTOR														{ 0; }
-	| BATTERY														{ 0; }
-	| INDUCTOR														{ 0; }
-	| CAPACITOR														{ 0; }
-	| AMMETER														{ 0; }
-	| VOLTMETER														{ 0; }
-	| OHMMETER														{ 0; }
-	| SINGLEPHASEVOL												{ 0; }
+type: RESISTOR														{ $$=0; }
+	| BATTERY														{ $$=0; }
+	| INDUCTOR														{ $$=0; }
+	| CAPACITOR														{ $$=0; }
+	| AMMETER														{ $$=0; }
+	| VOLTMETER														{ $$=0; }
+	| OHMMETER														{ $$=0; }
+	| SINGLEPHASEVOL												{ $$=0; }
 	;
 
-params: OPEN_PARENTHESIS coma_parameter CLOSE_PARENTHESIS			{ 0; }
-	|																{ 0; }
+params: OPEN_PARENTHESIS coma_parameter CLOSE_PARENTHESIS			{ $$=0; }
+	|																{ $$=0; }
 	;
 
-coma_parameter: parameter COMA coma_parameter						{ 0; }
-	| parameter														{ 0; }
+coma_parameter: parameter COMA coma_parameter						{ $$=0; }
+	| parameter														{ $$=0; }
 	;
 
-parameter: SHOW_NAME EQUAL boolean									{ 0; }
+parameter: SHOW_NAME EQUAL boolean									{ $$=0; }
 	;
 
-boolean: TRUE														{ 0; }
-	| FALSE															{ 0; }
+boolean: TRUE														{ $$=0; }
+	| FALSE															{ $$=0; }
 	;
 
-declare_nodes: NODE TEXT coma_text									{ 0; }
+declare_nodes: NODE TEXT coma_text									{ $$=0; }
 
-concat: TEXT GREATER_THAN concat									{ 0; }
-	| TEXT ADD concat												{ 0; }
-	| TEXT 															{ 0; }
+concat: TEXT GREATER_THAN concat									{ $$=0; }
+	| TEXT ADD concat												{ $$=0; }
+	| TEXT 															{ $$=0; }
 	;
 
-end_of_line: SEMICOLON												{ 0; }
+end_of_line: SEMICOLON												{ $$=0; }
 	;
 
 

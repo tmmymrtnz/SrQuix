@@ -63,9 +63,9 @@ whitespace		[ \f\n\r\t\v]
 
 ";"											{ return SemicolonPatternAction(); }
 
-{digit}+									{ return IntegerPatternAction(yytext, yyleng); }
-
 {text}+	    			                	{ return TextPatternAction(yytext, yyleng); }
+
+{digit}+									{ return IntegerPatternAction(yytext, yyleng); }
 
 {whitespace}+								{ IgnoredPatternAction(yytext, yyleng); }
 

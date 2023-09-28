@@ -6,5 +6,5 @@
  */
 
 void Generator(int result) {
-	LogInfo("El resultado de la expresion computada es: '%d'.", result);
+	LogInfo("La expresion genera un circuito valido. Compilacion terminada con codigo: '%d'.", result);
 }
