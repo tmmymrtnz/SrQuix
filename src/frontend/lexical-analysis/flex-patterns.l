@@ -51,10 +51,6 @@ whitespace		[ \f\n\r\t\v]
 ">"											{ return GreaterThanPatternAction(); }
 "+"											{ return AdditionOperatorPatternAction(); }
 
-"-"											{ return SubtractionOperatorPatternAction(yytext); }
-"*"											{ return MultiplicationOperatorPatternAction(yytext); }
-"/"											{ return DivisionOperatorPatternAction(yytext); }
-
 "("											{ return OpenParenthesisPatternAction(yytext); }
 ")"											{ return CloseParenthesisPatternAction(yytext); }
 
@@ -63,9 +59,9 @@ whitespace		[ \f\n\r\t\v]
 
 ";"											{ return SemicolonPatternAction(); }
 
-{text}+	    			                	{ return TextPatternAction(yytext, yyleng); }
-
 {digit}+									{ return IntegerPatternAction(yytext, yyleng); }
+
+{text}+	    			                	{ return TextPatternAction(yytext, yyleng); }
 
 {whitespace}+								{ IgnoredPatternAction(yytext, yyleng); }
 

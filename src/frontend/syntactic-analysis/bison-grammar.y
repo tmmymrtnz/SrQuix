@@ -17,10 +17,7 @@
 
 	// No-terminales (frontend).
 	int program;
-	int expression;
-	int factor;
 	int constant;
-
 	int declaration;
 	int concat;
 	int end_of_line;
@@ -71,10 +68,6 @@
 %token <token> TRUE
 %token <token> FALSE
 
-%token <token> SUB
-%token <token> MUL
-%token <token> DIV
-
 %token <token> OPEN_PARENTHESIS
 %token <token> CLOSE_PARENTHESIS
 
@@ -86,7 +79,6 @@
 
 // Tipos de dato para los no-terminales generados desde Bison.
 %type <program> program
-%type <expression> expression
 %type <declaration> declaration
 %type <declare_type> declare_type
 %type <coma_text> coma_text
@@ -98,15 +90,14 @@
 %type <parameter> parameter
 %type <boolean> boolean
 %type <declare_nodes> declare_nodes
-%type <factor> factor
 %type <constant> constant
 
 %type <concat> concat
 %type <end_of_line> end_of_line
 
 // Reglas de asociatividad y precedencia (de menor a mayor).
-%left ADD SUB
-%left MUL DIV
+// %left ADD SUB
+// %left MUL DIV
 
 // El símbolo inicial de la gramatica.
 %start program
@@ -114,7 +105,6 @@
 %%
 
 program: declaration												{ $$ = ProgramGrammarAction($1); }
-	| expression													{ $$ = ProgramGrammarAction($1); }
 	;
 
 declaration: declare_type end_of_line declaration					{ $$=0; }
@@ -130,9 +120,9 @@ coma_text: COMA TEXT coma_text										{ $$=0; }
 	| 																{ $$=0; }
 	;
 
-matching_params: TEXT matching_params_rec INTEGER CLOSE_BRACKET params		{ $$=0; }
+matching_params: TEXT matching_params_rec constant CLOSE_BRACKET params		{ $$=0; }
 
-matching_params_rec: COMA TEXT matching_params_rec INTEGER COMA		{ $$=0; }
+matching_params_rec: COMA TEXT matching_params_rec constant COMA		{ $$=0; }
 	|  EQUAL OPEN_BRACKET											{ $$=0; }
 	;
 
@@ -169,22 +159,6 @@ concat: TEXT GREATER_THAN concat									{ $$=0; }
 	;
 
 end_of_line: SEMICOLON												{ $$=0; }
-	;
-
-
-
-
-
-
-expression: expression[left] ADD expression[right]					{ $$ = AdditionExpressionGrammarAction($left, $right); }
-	| expression[left] SUB expression[right]						{ $$ = SubtractionExpressionGrammarAction($left, $right); }
-	| expression[left] MUL expression[right]						{ $$ = MultiplicationExpressionGrammarAction($left, $right); }
-	| expression[left] DIV expression[right]						{ $$ = DivisionExpressionGrammarAction($left, $right); }
-	| factor														{ $$ = FactorExpressionGrammarAction($1); }
-	;
-
-factor: OPEN_PARENTHESIS expression CLOSE_PARENTHESIS				{ $$ = ExpressionFactorGrammarAction($2); }
-	| constant														{ $$ = ConstantFactorGrammarAction($1); }
 	;
 
 constant: INTEGER													{ $$ = IntegerConstantGrammarAction($1); }

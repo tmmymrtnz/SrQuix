@@ -129,12 +129,6 @@ token CloseParenthesisPatternAction() {
 	return CLOSE_PARENTHESIS;
 }
 
-token DivisionOperatorPatternAction() {
-	LogDebug("[Flex] DivisionOperatorPatternAction: '/'.");
-	yylval.token = DIV;
-	return DIV;
-}
-
 token IntegerPatternAction(const char * lexeme, const int length) {
 	LogDebug("[Flex] IntegerPatternAction: '%s' (length = %d).", lexeme, length);
 	char * lexemeCopy = copyLexeme(lexeme, length);
@@ -149,12 +143,6 @@ token TextPatternAction(const char * lexeme, const int length) {
 	yylval.text = lexemeCopy;
 	free(lexemeCopy);
 	return TEXT;
-}
-
-token MultiplicationOperatorPatternAction() {
-	LogDebug("[Flex] MultiplicationOperatorPatternAction: '*'.");
-	yylval.token = MUL;
-	return MUL;
 }
 
 token OpenParenthesisPatternAction() {
@@ -185,12 +173,6 @@ token SinglePhaseVolPatternAction() {
 	LogDebug("[Flex] SinglePhaseVolPatternAction: 'node'.");
 	yylval.token = SINGLEPHASEVOL;
 	return SINGLEPHASEVOL;
-}
-
-token SubtractionOperatorPatternAction() {
-	LogDebug("[Flex] SubtractionOperatorPatternAction: '-'.");
-	yylval.token = SUB;
-	return SUB;
 }
 
 token UnknownPatternAction(const char * lexeme, const int length) {
