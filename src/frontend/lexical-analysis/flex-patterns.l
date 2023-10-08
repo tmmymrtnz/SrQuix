@@ -18,7 +18,6 @@
 
 /* Patrones reutilizables. */
 digit			[0-9]
-character		[A-Za-z]
 text            [A-Za-z0-9]
 endline			[\n]
 whitespace		[ \f\n\r\t\v]
