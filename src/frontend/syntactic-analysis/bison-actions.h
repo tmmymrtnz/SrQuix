@@ -11,21 +11,46 @@
  * abstracta (i.e., el AST).
  */
 
-// Programa.
-int ProgramGrammarAction(const int value);
+Program * ProgramGrammarAction(const Declaration * declaration);
 
-// Expresión.
-int AdditionExpressionGrammarAction(const int leftValue, const int rightValue);
-int SubtractionExpressionGrammarAction(const int leftValue, const int rightValue);
-int MultiplicationExpressionGrammarAction(const int leftValue, const int rightValue);
-int DivisionExpressionGrammarAction(const int leftValue, const int rightValue);
-int FactorExpressionGrammarAction(const int value);
+Declaration * DeclarationTypeGrammarAction(const DeclareType * declare_type, const Declaration * declaration);
 
-// Factores.
-int ExpressionFactorGrammarAction(const int value);
-int ConstantFactorGrammarAction(const int value);
+Declaration * DeclarationNodeGrammarAction(const DeclareNode * declare_node, const Declaration * declaration);
 
-// Constantes.
-int IntegerConstantGrammarAction(const int value);
+Declaration * DeclarationConcatGrammarAction(const Concat * concat, const Declaration * declaration);
+
+DeclareType * DeclareTypeGrammarAction(const ComponentType * componentType, const ComponentDefRec * component_def_rec, const Params * params);
+
+ComponentDefRec * ComaTextGrammarAction(const char * componentName, const ComponentDefRec * component_def_rec);
+
+ComponentDefRec * ComponentDefGrammarAction(const char * componentName, const int value, const ComponentDefRec * component_def_rec);
+
+ComponentType * ComponentTypeResistorGrammarAction();
+ComponentType * ComponentTypeBatteryGrammarAction();
+ComponentType * ComponentTypeInductorGrammarAction();
+ComponentType * ComponentTypeCapacitorGrammarAction();
+ComponentType * ComponentTypeAmmeterGrammarAction();
+ComponentType * ComponentTypeVoltmeterGrammarAction();
+ComponentType * ComponentTypeOhmMeterGrammarAction();
+ComponentType * ComponentTypeSinglePhaseVolGrammarAction();
+
+Params * ParamsGrammarAction(const ComaParameter * comaParameter);
+
+ComaParameter * ComaParameterGrammarAction(const Parameter * parameter, const ComaParameter * comaParameter);
+
+Parameter * ParameterShowNameGrammarAction(const Boolean * boolean);
+
+Boolean * BooleanTrueGrammarAction();
+Boolean * BooleanFalseGrammarAction();
+
+DeclareNode * DeclareNodeGrammarAction(const char * nodeName, const DeclareNode * declareNode);
+
+Concat * ConcatToGrammarAction(const char * componentName, const Concat * concat);
+
+Concat * ConcatPlusGrammarAction(const char * componentName, const Concat * concat);
+
+int ConstantGrammarAction(const int value);
+
+char * ComponentNameGrammarAction(const char * componentName);
 
 #endif

@@ -7,33 +7,52 @@
 // Tipos de dato utilizados en las variables semánticas ($$, $1, $2, etc.).
 %union {
 	// No-terminales (backend).
-	/*
-	Program program;
-	Expression expression;
-	Factor factor;
-	Constant constant;
-	...
-	*/
+	Program * program;
+	int constant;
+	char * component_name;
+	char * node_name;
+	Declaration * declaration;
+	Concat * concat;
+	void * end_of_line;
+	DeclareType * declare_type;
+	ComponentDefRec * coma_text;
+	// SemiColonText semi_colon_text;
+	DeclareNode * coma_node;
+	ComponentType * component_type;
+	Boolean * boolean;
+	DeclareNode * declare_node;
+
+	ComponentDefRec * component_def;
+	ComponentDefRec * component_def_rec;
+	
+	Params * params;
+	ComaParameter * coma_parameter;
+	Parameter * parameter;
 
 	// No-terminales (frontend).
+	/*
 	int program;
 	int constant;
+	int component_name;
+	int node_name;
 	int declaration;
 	int concat;
 	int end_of_line;
 	int declare_type;
 	int coma_text;
-	int type;
+	int coma_node;
+	int component_type;
 	int boolean;
-	int declare_nodes;
+	int declare_node;
 
-	int matching_params;
-	int matching_params_rec;
+	int component_def;
+	int component_def_rec;
 	
 	int params;
 	int coma_parameter;
 	int parameter;
-
+	*/
+	
 	// Terminales.
 	token token;
 	int integer;
@@ -44,53 +63,57 @@
 %token <token> ERROR
 
 // IDs y tipos de los tokens terminales generados desde Flex.
-%token <token> RESISTOR
-%token <token> BATTERY
-%token <token> INDUCTOR
-%token <token> CAPACITOR
-%token <token> VOLTMETER
-%token <token> OHMMETER
-%token <token> AMMETER
-%token <token> SINGLEPHASEVOL
+%token <component_type> RESISTOR
+%token <component_type> BATTERY
+%token <component_type> INDUCTOR
+%token <component_type> CAPACITOR
+%token <component_type> VOLTMETER
+%token <component_type> OHMMETER
+%token <component_type> AMMETER
+%token <component_type> SINGLEPHASEVOL
 
-%token <token> COMA
-%token <token> EQUAL
+%token <coma_text> COMA
+%token <token> EQUAL  // eeee ??
 
-%token <token> SEMICOLON
+%token <char> SEMICOLON //e?
 
-%token <token> NODE
+%token <declare_node> NODE
 
-%token <token> ADD
-%token <token> GREATER_THAN
+%token <concat_type> ADD
+%token <concat_type> GREATER_THAN
 
-%token <token> SHOW_NAME
+%token <parameter_type> SHOW_NAME
 
-%token <token> TRUE
-%token <token> FALSE
+%token <boolean> TRUE
+%token <boolean> FALSE
 
-%token <token> OPEN_PARENTHESIS
-%token <token> CLOSE_PARENTHESIS
+%token <text> OPEN_PARENTHESIS
+%token <text> CLOSE_PARENTHESIS
 
-%token <token> OPEN_BRACKET
-%token <token> CLOSE_BRACKET
+%token <text> OPEN_BRACKET
+%token <text> CLOSE_BRACKET
 
 %token <integer> INTEGER
-%token <integer> TEXT
+%token <text> TEXT
+
 
 // Tipos de dato para los no-terminales generados desde Bison.
 %type <program> program
 %type <declaration> declaration
 %type <declare_type> declare_type
 %type <coma_text> coma_text
-%type <matching_params> matching_params
-%type <matching_params_rec> matching_params_rec
-%type <type> type
+%type <coma_node> coma_node
+%type <component_def> component_def
+%type <component_def_rec> component_def_rec
+%type <component_type> component_type
 %type <params> params
 %type <coma_parameter> coma_parameter
 %type <parameter> parameter
 %type <boolean> boolean
-%type <declare_nodes> declare_nodes
+%type <declare_node> declare_node
 %type <constant> constant
+%type <component_name> component_name
+%type <node_name> node_name
 
 %type <concat> concat
 %type <end_of_line> end_of_line
@@ -107,61 +130,73 @@
 program: declaration												{ $$ = ProgramGrammarAction($1); }
 	;
 
-declaration: declare_type end_of_line declaration					{ $$=0; }
-	| declare_nodes end_of_line declaration						{ $$=0; }
-	| concat end_of_line declaration								{ $$=0; }
-	|																{ $$=0; }
+declaration: declare_type end_of_line declaration					{ $$ = DeclarationTypeGrammarAction($1, $3);	}
+	| declare_node end_of_line declaration							{ $$ = DeclarationNodeGrammarAction($1, $3);	}
+	| concat end_of_line declaration								{ $$ = DeclarationConcatGrammarAction($1, $3);	}
+	|																{ $$ = NULL; }
 	;
 
-declare_type: type TEXT coma_text									{ $$=0; }
-	| type matching_params											{ $$=0; }
-
-coma_text: COMA TEXT coma_text										{ $$=0; }
-	| 																{ $$=0; }
+declare_type: component_type coma_text									{ $$ = DeclareTypeGrammarAction($1, $2, NULL); 	}
+	| component_type component_def params								{ $$ = DeclareTypeGrammarAction($1, $2, $3); 	}
 	;
 
-matching_params: TEXT matching_params_rec constant CLOSE_BRACKET params		{ $$=0; }
-
-matching_params_rec: COMA TEXT matching_params_rec constant COMA		{ $$=0; }
-	|  EQUAL OPEN_BRACKET											{ $$=0; }
+coma_text: component_name COMA coma_text								{ $$ = ComaTextGrammarAction($1, $3);	 }
+	| component_name													{ $$ = ComaTextGrammarAction($1, NULL);	 }
 	;
 
-type: RESISTOR														{ $$=0; }
-	| BATTERY														{ $$=0; }
-	| INDUCTOR														{ $$=0; }
-	| CAPACITOR														{ $$=0; }
-	| AMMETER														{ $$=0; }
-	| VOLTMETER														{ $$=0; }
-	| OHMMETER														{ $$=0; }
-	| SINGLEPHASEVOL												{ $$=0; }
+component_def: component_name component_def_rec constant CLOSE_BRACKET		{ $$= ComponentDefGrammarAction($1, $3, $2); }
 	;
 
-params: OPEN_PARENTHESIS coma_parameter CLOSE_PARENTHESIS			{ $$=0; }
-	|																{ $$=0; }
+component_def_rec: COMA component_name component_def_rec constant COMA		{ $$= ComponentDefGrammarAction($2, $4, $3); }
+	|  EQUAL OPEN_BRACKET													{ $$= NULL; }
 	;
 
-coma_parameter: parameter COMA coma_parameter						{ $$=0; }
-	| parameter														{ $$=0; }
+component_type: RESISTOR											{ $$ = ComponentTypeResistorGrammarAction();	}
+	| BATTERY														{ $$ = ComponentTypeBatteryGrammarAction();		}
+	| INDUCTOR														{ $$ = ComponentTypeInductorGrammarAction(); 	}
+	| CAPACITOR														{ $$ = ComponentTypeCapacitorGrammarAction(); 	}
+	| AMMETER														{ $$ = ComponentTypeAmmeterGrammarAction(); 	}
+	| VOLTMETER														{ $$ = ComponentTypeVoltmeterGrammarAction(); 	}
+	| OHMMETER														{ $$ = ComponentTypeOhmMeterGrammarAction(); 	}
+	| SINGLEPHASEVOL												{ $$ = ComponentTypeSinglePhaseVolGrammarAction(); }
 	;
 
-parameter: SHOW_NAME EQUAL boolean									{ $$=0; }
+params: OPEN_PARENTHESIS coma_parameter CLOSE_PARENTHESIS			{ $$ = ParamsGrammarAction($2); }
+	|																{ $$ = NULL; }
 	;
 
-boolean: TRUE														{ $$=0; }
-	| FALSE															{ $$=0; }
+coma_parameter: parameter COMA coma_parameter						{ $$ = ComaParameterGrammarAction($1, $3); 	}
+	| parameter														{ $$ = ComaParameterGrammarAction($1, NULL);}
 	;
 
-declare_nodes: NODE TEXT coma_text									{ $$=0; }
-
-concat: TEXT GREATER_THAN concat									{ $$=0; }
-	| TEXT ADD concat												{ $$=0; }
-	| TEXT 															{ $$=0; }
+parameter: SHOW_NAME EQUAL boolean									{ $$ = ParameterShowNameGrammarAction($3); }
 	;
 
-end_of_line: SEMICOLON												{ $$=0; }
+boolean: TRUE														{ $$ = BooleanTrueGrammarAction();	 }
+	| FALSE															{ $$ = BooleanFalseGrammarAction();	 }
 	;
 
-constant: INTEGER													{ $$ = IntegerConstantGrammarAction($1); }
+coma_node: COMA node_name coma_node									{ $$ = DeclareNodeGrammarAction($2, $3); }
+	|																{ $$ = NULL; }
 	;
 
+declare_node: NODE node_name coma_node								{ $$ = DeclareNodeGrammarAction($2, $3); }
+	;
+
+concat: component_name GREATER_THAN concat							{ $$ = ConcatToGrammarAction($1, $3); }
+	| node_name ADD concat											{ $$ = ConcatPlusGrammarAction($1, $3); }
+	| component_name 												{ $$ = ConcatToGrammarAction($1, NULL); }
+	;
+
+end_of_line: SEMICOLON												{ $$ = NULL; }
+	;
+
+constant: INTEGER													{ $$ = ConstantGrammarAction($1); }
+	;
+
+component_name: TEXT												{ $$ = ComponentNameGrammarAction($1); }
+	;
+
+node_name: TEXT														{ $$ = ComponentNameGrammarAction($1); }
+	;
 %%

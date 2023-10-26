@@ -3,6 +3,7 @@
 #include "bison-actions.h"
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 /**
  * Implementación de "bison-actions.h".
@@ -30,7 +31,10 @@ void yyerror(const char * string) {
 * indica que efectivamente el programa de entrada se pudo generar con esta
 * gramática, o lo que es lo mismo, que el programa pertenece al lenguaje.
 */
-int ProgramGrammarAction(const int value) {
+Program * ProgramGrammarAction(const Declaration * declaration) {
+	Program * new_program = (Program *) malloc(sizeof(Program));
+	int value = 0; // como representamos value con nuestra estructura?
+	
 	LogDebug("[Bison] ProgramGrammarAction(%d)", value);
 	/*
 	* "state" es una variable global que almacena el estado del compilador,
@@ -46,45 +50,209 @@ int ProgramGrammarAction(const int value) {
 	* variable es un simple entero, en lugar de un nodo.
 	*/
 	state.result = value;
+	return new_program;
+}
+
+Declaration * DeclarationTypeGrammarAction( const DeclareType * declare_type, const Declaration * declaration){
+	Declaration * new_declaration = (Declaration *) malloc(sizeof(Declaration));
+	new_declaration->content.declare_type = declare_type;
+	new_declaration->declaration_type = T_TYPE;
+	new_declaration->declaration = declaration;
+	return new_declaration;
+}
+
+Declaration * DeclarationNodeGrammarAction(const DeclareNode * declare_node, const Declaration * declaration){
+	Declaration * new_declaration = (Declaration *) malloc(sizeof(Declaration));
+	new_declaration->content.declare_node = declare_node;
+	new_declaration->declaration_type = T_NODE;
+	new_declaration->declaration = declaration;
+	return new_declaration;
+}
+
+Declaration * DeclarationConcatGrammarAction(const Concat * concat, const Declaration * declaration){
+	Declaration * new_declaration = (Declaration *) malloc(sizeof(Declaration));
+	new_declaration->content.concat = concat;
+	new_declaration->declaration_type = T_CONCAT;
+	new_declaration->declaration = declaration;
+	return new_declaration;
+}
+
+ComponentType * ComponentTypeResistorGrammarAction(){
+	ComponentType * new_component_type = (ComponentType *) malloc(sizeof(ComponentType));
+	* new_component_type = T_RESISTOR;
+	return new_component_type;
+}
+
+ComponentType * ComponentTypeBatteryGrammarAction(){
+	ComponentType * new_component_type = (ComponentType *) malloc(sizeof(ComponentType));
+	* new_component_type = T_BATTERY;
+	return new_component_type;
+}
+
+ComponentType * ComponentTypeInductorGrammarAction(){
+	ComponentType * new_component_type = (ComponentType *) malloc(sizeof(ComponentType));
+	* new_component_type = T_INDUCTOR;
+	return new_component_type;
+}
+
+ComponentType * ComponentTypeCapacitorGrammarAction(){
+	ComponentType * new_component_type = (ComponentType *) malloc(sizeof(ComponentType));
+	* new_component_type = T_CAPACITOR;
+	return new_component_type;
+}
+
+ComponentType * ComponentTypeAmmeterGrammarAction(){
+	ComponentType * new_component_type = (ComponentType *) malloc(sizeof(ComponentType));
+	* new_component_type = T_AMMETER;
+	return new_component_type;
+}
+
+ComponentType * ComponentTypeVoltmeterGrammarAction(){
+	ComponentType * new_component_type = (ComponentType *) malloc(sizeof(ComponentType));
+	* new_component_type = T_VOLTMETER;
+	return new_component_type;
+}
+
+ComponentType * ComponentTypeOhmMeterGrammarAction(){
+	ComponentType * new_component_type = (ComponentType *) malloc(sizeof(ComponentType));
+	* new_component_type = T_OHMMETER;
+	return new_component_type;
+}
+
+ComponentType * ComponentTypeSinglePhaseVolGrammarAction(){
+	ComponentType * new_component_type = (ComponentType *) malloc(sizeof(ComponentType));
+	* new_component_type = T_SINGLEPHASEVOL;
+	return new_component_type;
+}
+
+DeclareType * DeclareTypeGrammarAction(const ComponentType * componentType, const ComponentDefRec * component_def_rec, const Params * params){
+	DeclareType * new_declare_type = (DeclareType *) malloc(sizeof(DeclareType));
+	new_declare_type->component_type = componentType;
+	new_declare_type->component_def_rec = component_def_rec;
+	new_declare_type->params = params;
+	return new_declare_type;
+}
+
+ComponentDefRec * ComaTextGrammarAction(const char * componentName, const ComponentDefRec * component_def_rec){
+	ComponentDefRec * new_component_def_rec = (ComponentDefRec *) malloc(sizeof(ComponentDefRec));
+	new_component_def_rec->component_name = componentName;
+	// new_component_def_rec->constant = NULL;
+	new_component_def_rec->component_def_rec = component_def_rec;
+	return new_component_def_rec;
+}
+
+ComponentDefRec * ComponentDefGrammarAction(const char * componentName, const int value, const ComponentDefRec * component_def_rec){
+	ComponentDefRec * new_component_def_rec = (ComponentDefRec *) malloc(sizeof(ComponentDefRec));
+	new_component_def_rec->component_name = componentName;
+	new_component_def_rec->constant = value;
+	new_component_def_rec->component_def_rec = component_def_rec;
+	return new_component_def_rec;
+}
+
+
+Params * ParamsGrammarAction(const ComaParameter * comaParameter){
+	Params * new_params = (Params *) malloc(sizeof(Params));
+	new_params->coma_parameter = comaParameter;
+	return new_params;
+}
+
+ComaParameter * ComaParameterGrammarAction(const Parameter * parameter, const ComaParameter * comaParameter){
+	ComaParameter * new_coma_parameter = (ComaParameter *) malloc(sizeof(ComaParameter));
+	new_coma_parameter->parameter = parameter;
+	new_coma_parameter->coma_parameter = comaParameter;
+	return new_coma_parameter;
+}
+
+Parameter * ParameterShowNameGrammarAction(const Boolean * boolean){
+	Parameter * new_parameter = (Parameter *) malloc(sizeof(Parameter));
+	new_parameter->parameter = T_SHOW_NAME;
+	new_parameter->boolean = boolean;
+	return new_parameter;
+}
+
+Boolean * BooleanTrueGrammarAction(){
+	Boolean * new_boolean = (Boolean *) malloc(sizeof(Boolean));
+	* new_boolean = T_TRUE;
+	return new_boolean;
+}
+
+Boolean * BooleanFalseGrammarAction(){
+	Boolean * new_boolean = (Boolean *) malloc(sizeof(Boolean));
+	* new_boolean = T_FALSE;
+	return new_boolean;
+}
+
+DeclareNode * DeclareNodeGrammarAction(const char * nodeName, const DeclareNode * declare_node){
+	DeclareNode * new_declare_node = (DeclareNode *) malloc(sizeof(DeclareNode));
+	new_declare_node->name = nodeName;
+	new_declare_node->declare_node = declare_node;
+	return new_declare_node;
+}
+
+Concat * ConcatToGrammarAction(const char * componentName, const Concat * concat){
+	Concat * new_concat = (Concat *) malloc(sizeof(Concat));
+	new_concat->name = componentName;
+	new_concat->concat_type= T_GREATER_THAN;
+	new_concat->concat = concat;
+	return new_concat;
+}
+
+Concat * ConcatPlusGrammarAction(const char * componentName, const Concat * concat){
+	Concat * new_concat = (Concat *) malloc(sizeof(Concat));
+	new_concat->name = componentName;
+	new_concat->concat_type = T_ADD;
+	new_concat->concat = concat;
+	return new_concat;
+}
+
+
+int ConstantGrammarAction(const int value){
 	return value;
 }
 
-int AdditionExpressionGrammarAction(const int leftValue, const int rightValue) {
-	LogDebug("[Bison] AdditionExpressionGrammarAction(%d, %d)", leftValue, rightValue);
-	return Add(leftValue, rightValue);
+char * ComponentNameGrammarAction(const char * componentName){
+	char * new_component_name = (char *) malloc(sizeof(char) * strlen(componentName));
+	strcpy(new_component_name, componentName);
+	return new_component_name;
 }
 
-int SubtractionExpressionGrammarAction(const int leftValue, const int rightValue) {
-	LogDebug("[Bison] SubtractionExpressionGrammarAction(%d, %d)", leftValue, rightValue);
-	return Subtract(leftValue, rightValue);
-}
 
-int MultiplicationExpressionGrammarAction(const int leftValue, const int rightValue) {
-	LogDebug("[Bison] MultiplicationExpressionGrammarAction(%d, %d)", leftValue, rightValue);
-	return Multiply(leftValue, rightValue);
-}
+// int AdditionExpressionGrammarAction(const int leftValue, const int rightValue) {
+// 	LogDebug("[Bison] AdditionExpressionGrammarAction(%d, %d)", leftValue, rightValue);
+// 	return Add(leftValue, rightValue);
+// }
 
-int DivisionExpressionGrammarAction(const int leftValue, const int rightValue) {
-	LogDebug("[Bison] DivisionExpressionGrammarAction(%d, %d)", leftValue, rightValue);
-	return Divide(leftValue, rightValue);
-}
+// int SubtractionExpressionGrammarAction(const int leftValue, const int rightValue) {
+// 	LogDebug("[Bison] SubtractionExpressionGrammarAction(%d, %d)", leftValue, rightValue);
+// 	return Subtract(leftValue, rightValue);
+// }
 
-int FactorExpressionGrammarAction(const int value) {
-	LogDebug("[Bison] FactorExpressionGrammarAction(%d)", value);
-	return value;
-}
+// int MultiplicationExpressionGrammarAction(const int leftValue, const int rightValue) {
+// 	LogDebug("[Bison] MultiplicationExpressionGrammarAction(%d, %d)", leftValue, rightValue);
+// 	return Multiply(leftValue, rightValue);
+// }
 
-int ExpressionFactorGrammarAction(const int value) {
-	LogDebug("[Bison] ExpressionFactorGrammarAction(%d)", value);
-	return value;
-}
+// int DivisionExpressionGrammarAction(const int leftValue, const int rightValue) {
+// 	LogDebug("[Bison] DivisionExpressionGrammarAction(%d, %d)", leftValue, rightValue);
+// 	return Divide(leftValue, rightValue);
+// }
 
-int ConstantFactorGrammarAction(const int value) {
-	LogDebug("[Bison] ConstantFactorGrammarAction(%d)", value);
-	return value;
-}
+// int FactorExpressionGrammarAction(const int value) {
+// 	LogDebug("[Bison] FactorExpressionGrammarAction(%d)", value);
+// 	return value;
+// }
 
-int IntegerConstantGrammarAction(const int value) {
-	LogDebug("[Bison] IntegerConstantGrammarAction(%d)", value);
-	return value;
-}
+// int ExpressionFactorGrammarAction(const int value) {
+// 	LogDebug("[Bison] ExpressionFactorGrammarAction(%d)", value);
+// 	return value;
+// }
+
+// int ConstantFactorGrammarAction(const int value) {
+// 	LogDebug("[Bison] ConstantFactorGrammarAction(%d)", value);
+// 	return value;
+// }
+
+// int IntegerConstantGrammarAction(const int value) {
+// 	LogDebug("[Bison] IntegerConstantGrammarAction(%d)", value);
+// 	return value;
+// }

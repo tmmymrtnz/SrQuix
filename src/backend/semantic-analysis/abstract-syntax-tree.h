@@ -25,32 +25,130 @@ typedef struct {
 * De este modo, al recorrer el AST, es posible determinar qué nodos hijos
 * posee según el valor de este enumerado.
 */
+// typedef enum {
+// 	EXPRESSION,
+// 	CONSTANT
+// } FactorType;
+
+// typedef struct {
+// 	FactorType type;
+// 	Expression * expression;
+// } Factor;
+
+// typedef enum {
+// 	ADDITION,
+// 	SUBTRACTION,
+// 	MULTIPLICATION,
+// 	DIVISION,
+// 	FACTOR
+// } ExpressionType;
+
+// struct Expression {
+// 	ExpressionType type;
+// 	Expression * leftExpression;
+// 	Expression * rightExpression;
+// };
+
+// typedef struct {
+// 	Expression * expression;
+// } Program;
+
 typedef enum {
-	EXPRESSION,
-	CONSTANT
-} FactorType;
+	T_RESISTOR,
+	T_BATTERY,
+	T_INDUCTOR,
+	T_CAPACITOR,
+	T_AMMETER,
+	T_VOLTMETER,
+	T_OHMMETER,
+	T_SINGLEPHASEVOL
+} ComponentType;
+
+typedef enum {
+	T_FALSE,
+	T_TRUE
+} Boolean;
+
+typedef enum {
+	T_SHOW_NAME
+} ParameterType;
 
 typedef struct {
-	FactorType type;
-	Expression * expression;
-} Factor;
+	const ParameterType * parameter;
+	const Boolean * boolean;
+} Parameter;
 
-typedef enum {
-	ADDITION,
-	SUBTRACTION,
-	MULTIPLICATION,
-	DIVISION,
-	FACTOR
-} ExpressionType;
+typedef struct ComaParameter ComaParameter;
 
-struct Expression {
-	ExpressionType type;
-	Expression * leftExpression;
-	Expression * rightExpression;
+struct ComaParameter{
+	const Parameter * parameter;
+
+	const ComaParameter * coma_parameter;
+};
+
+typedef struct ComponentDefRec ComponentDefRec;
+
+struct ComponentDefRec{
+	const char * component_name;
+	int constant;
+
+	const ComponentDefRec * component_def_rec;
 };
 
 typedef struct {
-	Expression * expression;
+	const ComaParameter * coma_parameter;
+} Params;
+
+typedef struct {
+	const ComponentType * component_type;
+	const ComponentDefRec * component_def_rec; // handles both cases, with and without values
+	const Params * params;
+} DeclareType;
+
+typedef struct DeclareNode DeclareNode;
+
+struct DeclareNode {
+	const char * name;
+	const DeclareNode * declare_node;
+};
+
+typedef struct Concat Concat;
+
+typedef enum {
+	T_GREATER_THAN,
+	T_ADD
+} ConcatType;
+
+struct Concat {
+	const char * name;
+	ConcatType concat_type;
+	const Concat * concat;
+};
+
+typedef enum {
+	T_TYPE,
+	T_NODE,
+	T_CONCAT
+} DeclarationType;
+
+typedef union {
+
+} DeclarationContent;
+
+typedef struct Declaration Declaration;
+
+struct Declaration {
+	DeclarationType declaration_type;
+	union {
+		const DeclareType * declare_type;
+		const DeclareNode * declare_node;
+		const Concat * concat;
+	} content;
+	const Declaration * declaration;
+};
+
+typedef struct {
+	const Declaration * declaration;
 } Program;
 
 #endif
