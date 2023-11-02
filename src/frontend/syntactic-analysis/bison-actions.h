@@ -3,6 +3,8 @@
 
 #include "../../backend/support/shared.h"
 #include "../../backend/semantic-analysis/abstract-syntax-tree.h"
+#include "../../backend/semantic-analysis/symbol-table.h"
+
 
 /**
  * Se definen las acciones a ejecutar sobre cada regla de producción de la
@@ -19,11 +21,11 @@ Declaration * DeclarationNodeGrammarAction(const DeclareNode * declare_node, con
 
 Declaration * DeclarationConcatGrammarAction(const Concat * concat, const Declaration * declaration);
 
-DeclareType * DeclareTypeGrammarAction(const ComponentType * componentType, const ComponentDefRec * component_def_rec, const Params * params);
+DeclareType * DeclareTypeGrammarAction(ComponentType * componentType, ComponentDefRec * component_def_rec, const Params * params);
 
-ComponentDefRec * ComaTextGrammarAction(const char * componentName, const ComponentDefRec * component_def_rec);
+ComponentDefRec * ComaTextGrammarAction(const char * componentName, ComponentDefRec * component_def_rec);
 
-ComponentDefRec * ComponentDefGrammarAction(const char * componentName, const int value, const ComponentDefRec * component_def_rec);
+ComponentDefRec * ComponentDefGrammarAction(const char * componentName, const int value, ComponentDefRec * component_def_rec);
 
 ComponentType * ComponentTypeResistorGrammarAction();
 ComponentType * ComponentTypeBatteryGrammarAction();
@@ -43,7 +45,7 @@ Parameter * ParameterShowNameGrammarAction(const Boolean * boolean);
 Boolean * BooleanTrueGrammarAction();
 Boolean * BooleanFalseGrammarAction();
 
-DeclareNode * DeclareNodeGrammarAction(const char * nodeName, const DeclareNode * declareNode);
+DeclareNode * DeclareNodeGrammarAction(const char * nodeName, DeclareNode * declareNode);
 
 Concat * ConcatToGrammarAction(const char * componentName, const Concat * concat);
 
