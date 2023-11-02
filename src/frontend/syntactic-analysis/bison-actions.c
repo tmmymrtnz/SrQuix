@@ -58,6 +58,7 @@ Declaration * DeclarationTypeGrammarAction( const DeclareType * declare_type, co
 	new_declaration->content.declare_type = declare_type;
 	new_declaration->declaration_type = T_TYPE;
 	new_declaration->declaration = declaration;
+	
 	return new_declaration;
 }
 
@@ -125,15 +126,18 @@ ComponentType * ComponentTypeSinglePhaseVolGrammarAction(){
 	return new_component_type;
 }
 
-DeclareType * DeclareTypeGrammarAction(const ComponentType * componentType, const ComponentDefRec * component_def_rec, const Params * params){
+DeclareType * DeclareTypeGrammarAction(ComponentType * componentType, ComponentDefRec * component_def_rec, const Params * params){
 	DeclareType * new_declare_type = (DeclareType *) malloc(sizeof(DeclareType));
 	new_declare_type->component_type = componentType;
 	new_declare_type->component_def_rec = component_def_rec;
 	new_declare_type->params = params;
+
+	addComponents(new_declare_type->component_def_rec, componentType);
+
 	return new_declare_type;
 }
 
-ComponentDefRec * ComaTextGrammarAction(const char * componentName, const ComponentDefRec * component_def_rec){
+ComponentDefRec * ComaTextGrammarAction(const char * componentName, ComponentDefRec * component_def_rec){
 	ComponentDefRec * new_component_def_rec = (ComponentDefRec *) malloc(sizeof(ComponentDefRec));
 	new_component_def_rec->component_name = componentName;
 	// new_component_def_rec->constant = NULL;
@@ -141,7 +145,7 @@ ComponentDefRec * ComaTextGrammarAction(const char * componentName, const Compon
 	return new_component_def_rec;
 }
 
-ComponentDefRec * ComponentDefGrammarAction(const char * componentName, const int value, const ComponentDefRec * component_def_rec){
+ComponentDefRec * ComponentDefGrammarAction(const char * componentName, const int value, ComponentDefRec * component_def_rec){
 	ComponentDefRec * new_component_def_rec = (ComponentDefRec *) malloc(sizeof(ComponentDefRec));
 	new_component_def_rec->component_name = componentName;
 	new_component_def_rec->constant = value;
@@ -182,10 +186,13 @@ Boolean * BooleanFalseGrammarAction(){
 	return new_boolean;
 }
 
-DeclareNode * DeclareNodeGrammarAction(const char * nodeName, const DeclareNode * declare_node){
+DeclareNode * DeclareNodeGrammarAction(const char * nodeName, DeclareNode * declare_node){
 	DeclareNode * new_declare_node = (DeclareNode *) malloc(sizeof(DeclareNode));
 	new_declare_node->name = nodeName;
 	new_declare_node->declare_node = declare_node;
+
+	addNode(new_declare_node);
+
 	return new_declare_node;
 }
 

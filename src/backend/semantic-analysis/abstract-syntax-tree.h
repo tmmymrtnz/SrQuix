@@ -25,33 +25,6 @@ typedef struct {
 * De este modo, al recorrer el AST, es posible determinar qué nodos hijos
 * posee según el valor de este enumerado.
 */
-// typedef enum {
-// 	EXPRESSION,
-// 	CONSTANT
-// } FactorType;
-
-// typedef struct {
-// 	FactorType type;
-// 	Expression * expression;
-// } Factor;
-
-// typedef enum {
-// 	ADDITION,
-// 	SUBTRACTION,
-// 	MULTIPLICATION,
-// 	DIVISION,
-// 	FACTOR
-// } ExpressionType;
-
-// struct Expression {
-// 	ExpressionType type;
-// 	Expression * leftExpression;
-// 	Expression * rightExpression;
-// };
-
-// typedef struct {
-// 	Expression * expression;
-// } Program;
 
 typedef enum {
 	T_RESISTOR,
@@ -92,7 +65,7 @@ struct ComponentDefRec{
 	const char * component_name;
 	int constant;
 
-	const ComponentDefRec * component_def_rec;
+	ComponentDefRec * component_def_rec;
 };
 
 typedef struct {
@@ -100,8 +73,8 @@ typedef struct {
 } Params;
 
 typedef struct {
-	const ComponentType * component_type;
-	const ComponentDefRec * component_def_rec; // handles both cases, with and without values
+	ComponentType * component_type;
+	ComponentDefRec * component_def_rec; // handles both cases, with and without values
 	const Params * params;
 } DeclareType;
 
@@ -109,7 +82,7 @@ typedef struct DeclareNode DeclareNode;
 
 struct DeclareNode {
 	const char * name;
-	const DeclareNode * declare_node;
+	DeclareNode * declare_node;
 };
 
 typedef struct Concat Concat;
@@ -130,10 +103,6 @@ typedef enum {
 	T_NODE,
 	T_CONCAT
 } DeclarationType;
-
-typedef union {
-
-} DeclarationContent;
 
 typedef struct Declaration Declaration;
 
