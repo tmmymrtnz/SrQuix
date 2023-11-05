@@ -53,6 +53,6 @@ Concat * ConcatPlusGrammarAction(const char * componentName, const Concat * conc
 
 int ConstantGrammarAction(const int value);
 
-char * ComponentNameGrammarAction(const char * componentName);
+char * ComponentNameGrammarAction(char * componentName);
 
 #endif

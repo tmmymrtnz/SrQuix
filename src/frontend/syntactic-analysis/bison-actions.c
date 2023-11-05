@@ -217,12 +217,12 @@ int ConstantGrammarAction(const int value){
 	return value;
 }
 
-char * ComponentNameGrammarAction(const char * componentName){
-	char * new_component_name = (char *) malloc(sizeof(char) * strlen(componentName));
-	strcpy(new_component_name, componentName);
-	return new_component_name;
-}
+char * ComponentNameGrammarAction(char * componentName){
 
+    printf("[CREATING STATIC NAME] %s\n", componentName);
+
+    return "hola";
+}
 
 // int AdditionExpressionGrammarAction(const int leftValue, const int rightValue) {
 // 	LogDebug("[Bison] AdditionExpressionGrammarAction(%d, %d)", leftValue, rightValue);
