@@ -141,7 +141,7 @@ token TextPatternAction(const char * lexeme, const int length) {
 	LogDebug("[Flex] TextPatternAction: '%s' (length = %d).", lexeme, length);
 	char * lexemeCopy = copyLexeme(lexeme, length);
 	yylval.text = lexemeCopy;
-	free(lexemeCopy);
+	// free(lexemeCopy);
 	return TEXT;
 }
 

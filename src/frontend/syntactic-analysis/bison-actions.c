@@ -221,7 +221,7 @@ char * ComponentNameGrammarAction(char * componentName){
 
     printf("[CREATING STATIC NAME] %s\n", componentName);
 
-    return "hola";
+    return componentName;
 }
 
 // int AdditionExpressionGrammarAction(const int leftValue, const int rightValue) {

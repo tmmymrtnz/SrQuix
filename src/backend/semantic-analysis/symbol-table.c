@@ -41,8 +41,6 @@ int compareNodeByName(const void* a, const void* b) {
     return strcmp(node_a->name, node_b->name);
 }
 
-int check = 0;
-
 // Function to print an element of type struct component_t
 void printComponent(const void* data) {
     const struct component_t* component = (const struct component_t*)data;
@@ -56,36 +54,25 @@ void printNode(const void* data) {
 }
 
 int objectExists(char * name) {
-    component_t component_search; // Create a search object
-    component_search.component_name = (char*)malloc(strlen(name) + 1);
-    strcpy(component_search.component_name, name);
-
-    check++;
+    component_t * component_search = (component_t *)malloc(sizeof(component_t)); // Create a search object
+    component_search->component_name = (char*)malloc(strlen(name) + 1);
+    strcpy(component_search->component_name, name);
 
     // firstMatch to check if the component already exists
-    component_t* existing_component = (component_t*)findElement(symbolTable->components, &component_search, compareComponentByName);
-
-    printList(symbolTable->components, printComponent);
-    printf("[CF?] %s\n", existing_component == NULL? "componente vacio": "componente econtrado");
+    component_t* existing_component = (component_t*)findElement(symbolTable->components, component_search, compareComponentByName);
 
     if ( existing_component != NULL ) {
-        printf("[ERROR] Ya existia un componente con ese nombre, banana!!!\n");
         return 1;
     }
     
-    node_t node_search; // Create a search object
-    node_search.name = (char*)malloc(strlen(name) + 1);
-    strcpy(node_search.name, name);
+    node_t * node_search = (node_t *)malloc(sizeof(node_t)); // Create a search object
+    node_search->name = (char*)malloc(strlen(name) + 1);
+    strcpy(node_search->name, name);
 
     // firstMatch to check if the node already exists
-    node_t* existing_node = (node_t*)findElement(symbolTable->nodes, &node_search, compareNodeByName);
-
-    printList(symbolTable->nodes, printNode);
-    printf("[NF?] %s\n", existing_node == NULL? "nodo vacio": "nodo encontrado");
+    node_t* existing_node = (node_t*)findElement(symbolTable->nodes, node_search, compareNodeByName);
 
     if ( existing_node != NULL ) {
-        printf("[ERROR] Ya existia un nodo con ese nombre, banana!!!\n");
-
         return 1;
     }
 
@@ -94,21 +81,16 @@ int objectExists(char * name) {
 
 
 void addComponent(ComponentDefRec * component, ComponentType * component_type) {
-    component_t new_component;
-    new_component.component_type = component_type;
-    new_component.component_name = (char*)malloc(strlen(component->component_name) + 1);
-    strcpy(new_component.component_name, component->component_name);
-    new_component.constant = component->constant;
+    component_t * new_component = (component_t *)malloc(sizeof(component_t));
+    new_component->component_type = component_type;
+    new_component->component_name = (char*)malloc(strlen(component->component_name) + 1);
+    strcpy(new_component->component_name, component->component_name);
+    new_component->constant = component->constant;
 
-    if (!objectExists(new_component.component_name)) {
-        // printf("%s", new_component.component_name);
-        // printComponent(&new_component);
-
-        printf("[ERROR] objectExists devolvio 0\n");
-        
-        addElement(symbolTable->components, &new_component);
+    if (!objectExists(new_component->component_name)) {        
+        addElement(symbolTable->components, new_component);
     } else {
-        printf("[ERROR] Ya existia un objeto con ese nombre, banana!!!\n");
+        printf("[ERROR] Ya existia un objeto con ese nombre!!!\n");
     }
 }
 
@@ -122,15 +104,15 @@ void addComponents(ComponentDefRec * component, ComponentType * component_type) 
 
 
 void addNode(DeclareNode * node) {
-    node_t new_node;
-    new_node.name = (char*)malloc(strlen(node->name) + 1);
-    strcpy(new_node.name, node->name);
+    node_t * new_node = (node_t *)malloc(sizeof(node_t));
+    new_node->name = (char*)malloc(strlen(node->name) + 1);
+    strcpy(new_node->name, node->name);
 
     // If existing_node is NULL, the node does not exist
-    if (!objectExists(new_node.name)) {
-        addElement(symbolTable->nodes, &new_node);
+    if (!objectExists(new_node->name)) {
+        addElement(symbolTable->nodes, new_node);
     } else {
-        printf("[ERROR] Ya existia un objeto con ese nombre, banana!!!\n");
+        printf("[ERROR] Ya existia un objeto con ese nombre!!!\n");
     }
 }
 
