@@ -25,7 +25,13 @@ const int main(const int argumentCount, const char ** arguments) {
 	// Compilar el programa de entrada.
 	LogInfo("Compilando...\n");
 	int result = yyparse();
+
 	int preResult = result;
+
+	if (/*checkUnlinked() != 0 ||*/ hasErrors()) {
+		state.succeed = false;
+	}
+
 	switch (preResult) {
 		case 0:
 			// La variable "succeed" es la que setea Bison al identificar el símbolo
@@ -36,6 +42,8 @@ const int main(const int argumentCount, const char ** arguments) {
 			}
 			else {
 				LogError("Se produjo un error en la aplicacion.");
+				printErrors();
+				// printUnlinked();
 				result = -1;
 				break;
 			}

@@ -3,6 +3,11 @@
 
 symbol_t *symbolTable = NULL;
 
+List * errorList = NULL;
+
+List * unlinkedObjects = NULL;
+
+void addError(char * errorMessage);
 
 void symbolTableInit(){
     if(symbolTable != NULL){
@@ -16,6 +21,9 @@ void symbolTableInit(){
     }
     symbol->components = initList();
     symbol->nodes = initList();
+
+    errorList = initList();
+    unlinkedObjects = initList();
 
     symbolTable = symbol;
     return;
@@ -124,7 +132,7 @@ void addComponent(ComponentDefRec * component, ComponentType * component_type) {
     if (findObject(new_component->component_name, &type) == NULL) {        
         addElement(symbolTable->components, new_component);
     } else {
-        printf("[ERROR] Ya existia un objeto con ese nombre!!!\n");
+        addError("Duplicate name declaration");
     }
 }
 
@@ -147,7 +155,7 @@ void addNode(DeclareNode * node) {
     if (findObject(new_node->name, &type) == NULL) {
         addElement(symbolTable->nodes, new_node);
     } else {
-        printf("[ERROR] Ya existia un objeto con ese nombre!!!\n");
+        addError("Duplicate name declaration");
     }
 }
 
@@ -174,7 +182,7 @@ void placeInNextDir(node_t * current, void * object, object_type type) {
         current->dir4_type = type;
         current->dir4 = object;
     } else {
-        printf("[ERROR] No node connections available. MAX: 4\n");
+        addError("No node connections available. MAX: 4");
     }
 
 }
@@ -188,12 +196,12 @@ void concatTo(char * fromObjectName, char * toObjectName) {
     void * toObject = findObject(toObjectName, &toType);
 
     if (fromObject == NULL || toObject == NULL) {
-        printf("[ERROR] Concat to: object not found\n");
+        addError("Concat to: object not found");
         return ;
     }
 
     if (fromObject == toObject) {
-        printf("[ERROR] Concat: cannot concat objects to themselves\n");
+        addError("Concat: cannot concat objects to themselves");
         return ;        
     }
 
@@ -226,7 +234,7 @@ void concatTo(char * fromObjectName, char * toObjectName) {
         node_t *toNode = (node_t *)toObject;
         placeInNextDir(toNode, fromObject, fromType);
     } else {
-        printf("[ERROR] Concat: type not found\n");
+        addError("Concat: type not found");
         return ; 
     }
 
@@ -241,17 +249,17 @@ void concatNodes(char * fromNodeName, char * toNodeName){
     void * toObject = findObject(toNodeName, &toType);
 
     if (fromObject == NULL || toObject == NULL) {
-        printf("[ERROR] Concat >: object not found\n");
+        addError("Concat >: object not found");
         return ;
     }
 
     if (fromObject == toObject) {
-        printf("[ERROR] Concat: cannot concat objects to themselves\n");
+        addError("Concat: cannot concat objects to themselves");
         return ;        
     }
 
     if (fromType != NODE_TYPE || toType != NODE_TYPE) {
-        printf("[ERROR] Concat +: only nodes can be used in + operation\n");
+        addError("Concat +: only nodes can be used in + operation");
         return ;
     }
 
@@ -263,6 +271,94 @@ void concatNodes(char * fromNodeName, char * toNodeName){
     
 }
 
+void addError(char * errorMessage) {
+    error_t * new_error = (error_t *)malloc(sizeof(error_t));
+    new_error->error_message = (char*)malloc(strlen(errorMessage) + 1);
+    strcpy(new_error->error_message, errorMessage);
+
+    addElement(errorList, new_error);
+}
+
+void printError(const void * data) {
+    const struct error_t* error = (const struct error_t*)data;
+
+    printf("[ERROR] %s\n", error->error_message);
+}
+
+void printErrors() {
+    Node * current = errorList->head;
+
+    if (current != NULL) {
+        printf("Errors: \n");
+
+        while (current != NULL) {
+            printError(current->data);
+            current = current->next;
+        }
+
+        printf("---\n");
+    }
+}
+
+int hasErrors() {
+    if (errorList->head == NULL) {
+        return 0;
+    }
+
+    return 1;
+}
+
+void addUnlinked(char * unlinkedName) {
+    error_t * new_unlinked = (error_t *)malloc(sizeof(error_t));
+    new_unlinked->error_message = (char*)malloc(strlen(unlinkedName) + 1);
+    strcpy(new_unlinked->error_message, unlinkedName);
+
+    addElement(unlinkedObjects, new_unlinked);
+}
+
+int checkUnlinked() {
+    int unlinkedCount = 0;
+
+    Node * current = symbolTable->components->head;
+
+    while (current != NULL) {
+        component_t * current_component = (component_t *)current->data;
+        if (current_component->prev == NULL && current_component->next == NULL) {
+            unlinkedCount++;
+            addUnlinked(current_component->component_name);
+        }
+        current = current->next;
+    }
+
+    current = symbolTable->nodes->head;
+
+    while (current != NULL) {
+        node_t * current_node = (node_t *)current->data;
+        if (current_node->dir1 == NULL && current_node->dir2 == NULL && current_node->dir3 == NULL && current_node->dir4 == NULL) {
+            unlinkedCount++;
+            addUnlinked(current_node->name);
+        }
+        current = current->next;
+    }
+
+    return unlinkedCount;
+}
+
+void printUnlinked() {
+    Node * current = unlinkedObjects->head;
+
+    if (current != NULL) {
+        printf("Unlinked objects: \n");
+
+        while (current != NULL) {
+            printError(current->data);
+            current = current->next;
+        }
+
+        printf("---\n");
+    }
+}
+
 void symbolTableFree() {
     if (symbolTable == NULL) {
         printf("Symbol table already freed\n");
@@ -272,6 +368,9 @@ void symbolTableFree() {
     // Free the components and nodes lists
     freeList(symbolTable->components);
     freeList(symbolTable->nodes);
+
+    freeList(errorList);
+    freeList(unlinkedObjects);
 
     // Free the symbol table structure
     free(symbolTable);

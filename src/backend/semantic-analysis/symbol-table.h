@@ -50,6 +50,13 @@ struct node_t {
     void * dir4;
 };
 
+typedef struct error_t error_t;
+
+struct error_t {
+    char *error_message;
+
+    // in the future we could add the component where the error happened
+};
 
 //inicia la tabla de simbolos
 void symbolTableInit();
@@ -67,6 +74,14 @@ void concatTo(char * fromObjectName, char * toObjectName);
 void concatNodes(char * fromNodeName, char * toNodeName);
 
 symbol_t * getSymbolTable();
+
+void printErrors();
+
+int hasErrors();
+
+int checkUnlinked();
+
+void printUnlinked();
 
 void symbolTableFree();
 
