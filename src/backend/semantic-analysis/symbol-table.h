@@ -28,44 +28,26 @@ struct component_t {
     ComponentType * component_type;
 
     object_type prev_type;
-    union {
-        const component_t *prev;
-        const node_t *prev_node;
-    };
+    void *prev;
 
     object_type next_type;
-    union {
-        const component_t *next;
-        const node_t *next_node;
-    };
+    void * next;
 };
 
 struct node_t {
     char *name;
 
     object_type dir1_type;
-    union {
-        const node_t *dir1;
-        const component_t *dir1_component;
-    };
+    void * dir1;
 
     object_type dir2_type;
-    union {
-        const node_t *dir2;
-        const component_t *dir2_component;
-    };
+    void * dir2;
 
     object_type dir3_type;
-    union {
-        const node_t *dir3;
-        const component_t *dir3_component;
-    };
+    void * dir3;
 
     object_type dir4_type;
-    union {
-        const node_t *dir4;
-        const component_t *dir4_component;
-    };
+    void * dir4;
 };
 
 
@@ -81,6 +63,8 @@ void addNode(DeclareNode * node);
 void addNodes(DeclareNode * node);
 
 void concatTo(char * fromObjectName, char * toObjectName);
+
+void concatNodes(char * fromNodeName, char * toNodeName);
 
 symbol_t * getSymbolTable();
 

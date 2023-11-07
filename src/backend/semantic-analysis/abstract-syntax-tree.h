@@ -93,7 +93,7 @@ typedef enum {
 } ConcatType;
 
 struct Concat {
-	const char * name;
+	char * name;
 	ConcatType concat_type;
 	const Concat * concat;
 };

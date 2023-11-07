@@ -45,15 +45,45 @@ int compareNodeByName(const void* a, const void* b) {
 void printComponent(const void* data) {
     const struct component_t* component = (const struct component_t*)data;
     printf("Component Name: %s, Constant: %d\n", component->component_name, component->constant);
+
+    printf("This dir: %p\n", component);
+
+    if (component->prev != NULL) {
+        if (component->prev_type == COMPONENT_TYPE) {
+            component_t *fromComponent = (component_t *)component->prev;
+            
+            printf("Prev comp name: %p\n", fromComponent->component_name);
+
+        } else if (component->prev_type == NODE_TYPE) {
+            node_t *fromNode = (node_t *)component->prev;
+
+            printf("Prev node name dir: %p\n", fromNode->name);
+        }
+    }
+        
+    printf("Prev dir: %p\n", component->prev);
+    printf("Next dir: %p\n", component->next);
 }
 
 // Function to print an element of type struct component_t
 void printNode(const void* data) {
     const struct node_t* node = (const struct node_t*)data;
     printf("Node Name: %s\n", node->name);
+    printf("Node Dir: %p\n", node);
+
+    printf("Dir1: %p\n", node->dir1);
+    printf("Dir2: %p\n", node->dir2);
+    printf("Dir3: %p\n", node->dir3);
+    printf("Dir4: %p\n", node->dir4);
+
 }
 
-int objectExists(char * name) {
+typedef struct {
+    void* object; // Pointer to the found object (component or node)
+    object_type type; // Type of the found object
+} ObjectResult;
+
+void * findObject(char * name, object_type * type) {
     component_t * component_search = (component_t *)malloc(sizeof(component_t)); // Create a search object
     component_search->component_name = (char*)malloc(strlen(name) + 1);
     strcpy(component_search->component_name, name);
@@ -62,7 +92,8 @@ int objectExists(char * name) {
     component_t* existing_component = (component_t*)findElement(symbolTable->components, component_search, compareComponentByName);
 
     if ( existing_component != NULL ) {
-        return 1;
+        *type = COMPONENT_TYPE;
+        return (void *)existing_component;
     }
     
     node_t * node_search = (node_t *)malloc(sizeof(node_t)); // Create a search object
@@ -73,10 +104,11 @@ int objectExists(char * name) {
     node_t* existing_node = (node_t*)findElement(symbolTable->nodes, node_search, compareNodeByName);
 
     if ( existing_node != NULL ) {
-        return 1;
+        *type = NODE_TYPE;
+        return (void *) existing_node;
     }
 
-    return 0;
+    return NULL;
 }
 
 
@@ -87,7 +119,9 @@ void addComponent(ComponentDefRec * component, ComponentType * component_type) {
     strcpy(new_component->component_name, component->component_name);
     new_component->constant = component->constant;
 
-    if (!objectExists(new_component->component_name)) {        
+    object_type type;
+
+    if (findObject(new_component->component_name, &type) == NULL) {        
         addElement(symbolTable->components, new_component);
     } else {
         printf("[ERROR] Ya existia un objeto con ese nombre!!!\n");
@@ -108,8 +142,9 @@ void addNode(DeclareNode * node) {
     new_node->name = (char*)malloc(strlen(node->name) + 1);
     strcpy(new_node->name, node->name);
 
-    // If existing_node is NULL, the node does not exist
-    if (!objectExists(new_node->name)) {
+    object_type type;
+
+    if (findObject(new_node->name, &type) == NULL) {
         addElement(symbolTable->nodes, new_node);
     } else {
         printf("[ERROR] Ya existia un objeto con ese nombre!!!\n");
@@ -124,6 +159,109 @@ void addNodes(DeclareNode * node) {
     }
 }
 
+void placeInNextDir(node_t * current, void * object, object_type type) {
+
+    if (current->dir1 == NULL) {
+        current->dir1_type = type;
+        current->dir1 = object;
+    } else if (current->dir2 == NULL) {
+        current->dir2_type = type;
+        current->dir2 = object;
+    } else if (current->dir3 == NULL) {
+        current->dir3_type = type;
+        current->dir3 = object;
+    } else if (current->dir4 == NULL) {
+        current->dir4_type = type;
+        current->dir4 = object;
+    } else {
+        printf("[ERROR] No node connections available. MAX: 4\n");
+    }
+
+}
+
+void concatTo(char * fromObjectName, char * toObjectName) {
+
+    object_type fromType;
+    void * fromObject = findObject(fromObjectName, &fromType);
+
+    object_type toType;
+    void * toObject = findObject(toObjectName, &toType);
+
+    if (fromObject == NULL || toObject == NULL) {
+        printf("[ERROR] Concat to: object not found\n");
+        return ;
+    }
+
+    if (fromObject == toObject) {
+        printf("[ERROR] Concat: cannot concat objects to themselves\n");
+        return ;        
+    }
+
+    if (fromType == COMPONENT_TYPE && toType == COMPONENT_TYPE) {
+        component_t *fromComponent = (component_t *)fromObject;
+        fromComponent->next_type = COMPONENT_TYPE;
+        fromComponent->next = toObject;
+        
+        component_t *toComponent = (component_t *)toObject;
+        toComponent->prev_type = COMPONENT_TYPE;
+        toComponent->prev = fromObject;
+    } else if (fromType == COMPONENT_TYPE && toType == NODE_TYPE) {
+        component_t *fromComponent = (component_t *)fromObject;
+        fromComponent->next_type = COMPONENT_TYPE;
+        fromComponent->next = toObject;
+
+        node_t *toNode = (node_t *)toObject;
+        placeInNextDir(toNode, fromObject, fromType);
+    } else if (fromType == NODE_TYPE && toType == COMPONENT_TYPE) {
+        node_t *fromNode = (node_t *)fromObject;
+        placeInNextDir(fromNode, toObject, toType);
+
+        component_t *toComponent = (component_t *)toObject;
+        toComponent->prev_type = COMPONENT_TYPE;
+        toComponent->prev = fromObject;
+    } else if (fromType == NODE_TYPE && toType == NODE_TYPE) {
+        node_t *fromNode = (node_t *)fromObject;
+        placeInNextDir(fromNode, toObject, toType);
+        
+        node_t *toNode = (node_t *)toObject;
+        placeInNextDir(toNode, fromObject, fromType);
+    } else {
+        printf("[ERROR] Concat: type not found\n");
+        return ; 
+    }
+
+}
+
+void concatNodes(char * fromNodeName, char * toNodeName){
+
+    object_type fromType;
+    void * fromObject = findObject(fromNodeName, &fromType);
+
+    object_type toType;
+    void * toObject = findObject(toNodeName, &toType);
+
+    if (fromObject == NULL || toObject == NULL) {
+        printf("[ERROR] Concat >: object not found\n");
+        return ;
+    }
+
+    if (fromObject == toObject) {
+        printf("[ERROR] Concat: cannot concat objects to themselves\n");
+        return ;        
+    }
+
+    if (fromType != NODE_TYPE || toType != NODE_TYPE) {
+        printf("[ERROR] Concat +: only nodes can be used in + operation\n");
+        return ;
+    }
+
+    node_t *fromNode = (node_t *)fromObject;
+    placeInNextDir(fromNode, toObject, toType);
+        
+    node_t *toNode = (node_t *)toObject;
+    placeInNextDir(toNode, fromObject, fromType);
+    
+}
 
 void symbolTableFree() {
     if (symbolTable == NULL) {

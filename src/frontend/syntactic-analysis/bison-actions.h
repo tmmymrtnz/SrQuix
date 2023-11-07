@@ -47,9 +47,9 @@ Boolean * BooleanFalseGrammarAction();
 
 DeclareNode * DeclareNodeGrammarAction(const char * nodeName, DeclareNode * declareNode);
 
-Concat * ConcatToGrammarAction(const char * componentName, const Concat * concat);
+Concat * ConcatToGrammarAction(char * componentName, const Concat * concat);
 
-Concat * ConcatPlusGrammarAction(const char * componentName, const Concat * concat);
+Concat * ConcatPlusGrammarAction(char * componentName, const Concat * concat);
 
 int ConstantGrammarAction(const int value);
 

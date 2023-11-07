@@ -196,19 +196,29 @@ DeclareNode * DeclareNodeGrammarAction(const char * nodeName, DeclareNode * decl
 	return new_declare_node;
 }
 
-Concat * ConcatToGrammarAction(const char * componentName, const Concat * concat){
+Concat * ConcatToGrammarAction(char * componentName, const Concat * concat){
 	Concat * new_concat = (Concat *) malloc(sizeof(Concat));
 	new_concat->name = componentName;
 	new_concat->concat_type= T_GREATER_THAN;
 	new_concat->concat = concat;
+
+	if (concat != NULL) {
+		concatTo(componentName, concat->name);
+	}
+
 	return new_concat;
 }
 
-Concat * ConcatPlusGrammarAction(const char * componentName, const Concat * concat){
+Concat * ConcatPlusGrammarAction(char * componentName, const Concat * concat){
 	Concat * new_concat = (Concat *) malloc(sizeof(Concat));
 	new_concat->name = componentName;
 	new_concat->concat_type = T_ADD;
 	new_concat->concat = concat;
+
+	if (concat != NULL) {
+		concatNodes(componentName, concat->name);
+	}
+
 	return new_concat;
 }
 
@@ -218,9 +228,6 @@ int ConstantGrammarAction(const int value){
 }
 
 char * ComponentNameGrammarAction(char * componentName){
-
-    printf("[CREATING STATIC NAME] %s\n", componentName);
-
     return componentName;
 }
 
