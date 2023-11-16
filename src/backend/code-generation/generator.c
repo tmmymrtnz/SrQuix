@@ -5,8 +5,98 @@
  * Implementación de "generator.h".
  */
 
+ComponentTypeLatex typeTable[] = {
+	{T_RESISTOR, 	"R",		"l",	"\\Omega"},
+	{T_BATTERY, 	"battery",	"l",	"V"},
+	{T_INDUCTOR, 	"inductor",	"l",	"H"}, 
+	{T_CAPACITOR, 	"C", 		"l",	"F"}, 
+	{T_AMMETER, 	"ammeter", 	"i_",	"mA"},
+	{T_VOLTMETER, 	"voltmeter","l",	"kV"},
+	{T_OHMMETER, 	"R",		"l",	"sus"},
+	{T_SINGLEPHASEVOL, "R", 	"l",	"sus"},
+	{0 , NULL}
+};
+
+
+char * getComponent(ComponentType * component_type) {
+	int i = 0;
+    while(typeTable[i].latex_value != NULL){
+        if(typeTable[i].component_type == *component_type){
+            return typeTable[i].latex_value;
+        }
+        i++;
+    }
+
+	return "Unknown";
+}
+
+char * getMeasurement(ComponentType * component_type) {
+	int i = 0;
+    while(typeTable[i].latex_value != NULL){
+        if(typeTable[i].component_type == *component_type){
+            return typeTable[i].measurement;
+        }
+        i++;
+    }
+
+	return "Unknown";
+}
+
+int x = 0;
+int y = 0;
+
+char * current_coord;
+
+
+char * currentPos() {
+	snprintf(current_coord, 20, "(%d,%d)", x, y);
+	return current_coord;
+}
+
+char * goRight() {
+	x += 2;
+	snprintf(current_coord, 20, "(%d,%d)", x, y);
+	return current_coord;
+}
+
+
+void generateComponent(component_t * component) {
+	if (component->constant == 0) {
+		printf("\n\t\tto[%s, l=$%s$] %s", getComponent(component->component_type), component->component_name, goRight());
+	} else {
+		printf("\n\t\tto[%s, l=$%d\\:%s$] %s", getComponent(component->component_type), component->constant, getMeasurement(component->component_type), goRight());
+	}
+}
+
+void semicolonEnter() {
+	printf(";\n");
+}
+
+void closeComponent() {
+	printf("\t\\draw %s -- (%d,%d) -- (%d,%d) -- (0,0);\n", current_coord, x, y-2, 0, y-2);
+}
+
 void Generator(int result, symbol_t * symbolTable) {
 	LogInfo("La expresion genera un circuito valido. Compilacion terminada con codigo: '%d'.", result);
 
-	printf("1st elem: %s\n", ((component_t *)symbolTable->components->head->next->data)->component_name);
+	current_coord = (char *)malloc(20 * sizeof(char));
+
+	printf("\\begin{circuitikz}\n");
+
+	printf("\t\\draw %s", currentPos());
+
+	component_t * current_component = (component_t *)symbolTable->components->head->data;
+
+	while (current_component != NULL) {
+		generateComponent(current_component);
+
+		current_component = current_component->next;
+	}
+	semicolonEnter();
+
+	closeComponent();
+
+	printf("\\end{circuitikz}\n");
+
+	free(current_coord);
 }
