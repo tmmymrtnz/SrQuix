@@ -79,10 +79,10 @@ void printNode(const void* data) {
     printf("Node Name: %s\n", node->name);
     printf("Node Dir: %p\n", node);
 
-    printf("Dir1: %p\n", node->dir1);
-    printf("Dir2: %p\n", node->dir2);
-    printf("Dir3: %p\n", node->dir3);
-    printf("Dir4: %p\n", node->dir4);
+    printf("Dir1: %p\n", node->dir[0]);
+    printf("Dir2: %p\n", node->dir[1]);
+    printf("Dir3: %p\n", node->dir[2]);
+    printf("Dir4: %p\n", node->dir[3]);
 
 }
 
@@ -169,22 +169,15 @@ void addNodes(DeclareNode * node) {
 
 void placeInNextDir(node_t * current, void * object, object_type type) {
 
-    if (current->dir1 == NULL) {
-        current->dir1_type = type;
-        current->dir1 = object;
-    } else if (current->dir2 == NULL) {
-        current->dir2_type = type;
-        current->dir2 = object;
-    } else if (current->dir3 == NULL) {
-        current->dir3_type = type;
-        current->dir3 = object;
-    } else if (current->dir4 == NULL) {
-        current->dir4_type = type;
-        current->dir4 = object;
-    } else {
-        addError("No node connections available. MAX: 4");
+    for (int i = 0; i < 4; i++) {
+        if (current->dir[i] == NULL) {
+            current->dir_type[i] = type;
+            current->dir[i] = object;
+            return ;
+        }
     }
 
+    addError("No node connections available. MAX: 4");
 }
 
 void concatTo(char * fromObjectName, char * toObjectName) {
@@ -215,7 +208,7 @@ void concatTo(char * fromObjectName, char * toObjectName) {
         toComponent->prev = fromObject;
     } else if (fromType == COMPONENT_TYPE && toType == NODE_TYPE) {
         component_t *fromComponent = (component_t *)fromObject;
-        fromComponent->next_type = COMPONENT_TYPE;
+        fromComponent->next_type = NODE_TYPE;
         fromComponent->next = toObject;
 
         node_t *toNode = (node_t *)toObject;
@@ -225,7 +218,7 @@ void concatTo(char * fromObjectName, char * toObjectName) {
         placeInNextDir(fromNode, toObject, toType);
 
         component_t *toComponent = (component_t *)toObject;
-        toComponent->prev_type = COMPONENT_TYPE;
+        toComponent->prev_type = NODE_TYPE;
         toComponent->prev = fromObject;
     } else if (fromType == NODE_TYPE && toType == NODE_TYPE) {
         node_t *fromNode = (node_t *)fromObject;
@@ -334,7 +327,7 @@ int checkUnlinked() {
 
     while (current != NULL) {
         node_t * current_node = (node_t *)current->data;
-        if (current_node->dir1 == NULL && current_node->dir2 == NULL && current_node->dir3 == NULL && current_node->dir4 == NULL) {
+        if (current_node->dir[0] == NULL && current_node->dir[1] == NULL && current_node->dir[2] == NULL && current_node->dir[3] == NULL) {
             unlinkedCount++;
             addUnlinked(current_node->name);
         }

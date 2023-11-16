@@ -81,20 +81,40 @@ void Generator(int result, symbol_t * symbolTable) {
 
 	current_coord = (char *)malloc(20 * sizeof(char));
 
-	printf("\\begin{circuitikz}\n");
+	printf("\\begin{circuitikz}");
 
-	printf("\t\\draw %s", currentPos());
+	Node * current_node = (Node *)symbolTable->nodes->head;
 
-	component_t * current_component = (component_t *)symbolTable->components->head->data;
+	while (current_node != NULL) {
+		for (int i = 0; i < 4; i++){
+			if (		((node_t *)current_node->data)->dir[i] != NULL &&
+						((node_t *)current_node->data)->dir_type[i] == COMPONENT_TYPE && 
+						((component_t *)((node_t *)current_node->data)->dir[i])->next_type == COMPONENT_TYPE) 
+				{
+				printf("\n\t\\draw %s", currentPos());
 
-	while (current_component != NULL) {
-		generateComponent(current_component);
+				component_t * current_component = (component_t *)((node_t *)current_node->data)->dir[i];
+				int finished = 0;
+				while (!finished) {
+					generateComponent(current_component);
 
-		current_component = current_component->next;
+					if (current_component->next_type == NODE_TYPE) {
+						finished = 1;
+					}
+
+					current_component = (component_t *)current_component->next;
+				}
+
+				semicolonEnter();
+				x = 0;
+				y -= 2;
+			}
+		}
+
+		current_node = current_node->next;
 	}
-	semicolonEnter();
 
-	closeComponent();
+	// closeComponent();
 
 	printf("\\end{circuitikz}\n");
 

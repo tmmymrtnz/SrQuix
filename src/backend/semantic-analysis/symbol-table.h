@@ -37,17 +37,8 @@ struct component_t {
 struct node_t {
     char *name;
 
-    object_type dir1_type;
-    void * dir1;
-
-    object_type dir2_type;
-    void * dir2;
-
-    object_type dir3_type;
-    void * dir3;
-
-    object_type dir4_type;
-    void * dir4;
+    object_type dir_type[4];
+    void *dir[4];
 };
 
 typedef struct error_t error_t;
