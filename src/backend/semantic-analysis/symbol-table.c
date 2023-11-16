@@ -9,15 +9,15 @@ List * unlinkedObjects = NULL;
 
 void addError(char * errorMessage);
 
-void symbolTableInit(){
+symbol_t * symbolTableInit(){
     if(symbolTable != NULL){
         printf("Symbol table already initialized\n");
-        return;
+        return symbolTable;
     }
 
     symbol_t* symbol = (symbol_t*)malloc(sizeof(symbol_t));
     if (symbol == NULL) {
-        return; // Memory allocation failed
+        return NULL; // Memory allocation failed
     }
     symbol->components = initList();
     symbol->nodes = initList();
@@ -26,7 +26,7 @@ void symbolTableInit(){
     unlinkedObjects = initList();
 
     symbolTable = symbol;
-    return;
+    return symbolTable;
 }
 
 symbol_t * getSymbolTable(){

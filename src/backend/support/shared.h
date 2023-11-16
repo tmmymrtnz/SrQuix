@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include "../semantic-analysis/abstract-syntax-tree.h"
+#include "../semantic-analysis/symbol-table.h"
 
 // Descriptor del archivo de entrada que utiliza Bison.
 extern FILE * yyin;
@@ -55,6 +56,7 @@ typedef struct {
 	// Agregar una pila para manipular scopes.
 	// Agregar una tabla de símbolos.
 	// ...
+	symbol_t * symbolTable;
 
 } CompilerState;
 

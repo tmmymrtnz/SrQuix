@@ -38,7 +38,7 @@ void LogErrorRaw(const char * const format, ...) {
 void LogInfo(const char * const format, ...) {
 	va_list arguments;
 	va_start(arguments, format);
-	Log(stdout, "[INFO ] ", format, "\n", arguments);
+	Log(stdout, "[INFO] ", format, "\n", arguments);
 	va_end(arguments);
 }
 

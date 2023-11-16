@@ -20,7 +20,7 @@ const int main(const int argumentCount, const char ** arguments) {
 		LogInfo("Argumento %d: '%s'", i, arguments[i]);
 	}
 
-	symbolTableInit();
+	state.symbolTable = symbolTableInit();
 
 	// Compilar el programa de entrada.
 	LogInfo("Compilando...\n");
@@ -38,7 +38,7 @@ const int main(const int argumentCount, const char ** arguments) {
 			// inicial de la gramática satisfactoriamente.
 			if (state.succeed) {
 				LogInfo("La compilacion fue exitosa.");
-				Generator(state.result);
+				Generator(state.result, state.symbolTable);
 			}
 			else {
 				LogError("Se produjo un error en la aplicacion.");

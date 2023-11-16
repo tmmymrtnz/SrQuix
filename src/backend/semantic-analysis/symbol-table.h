@@ -59,7 +59,7 @@ struct error_t {
 };
 
 //inicia la tabla de simbolos
-void symbolTableInit();
+symbol_t * symbolTableInit();
 
 void addComponent(ComponentDefRec * component, ComponentType * component_type);
 
