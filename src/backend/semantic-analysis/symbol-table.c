@@ -7,7 +7,7 @@ List * errorList = NULL;
 
 List * unlinkedObjects = NULL;
 
-void addError(char * errorMessage);
+void addError(char * errorMessage, char * object_name);
 
 symbol_t * symbolTableInit(){
     if(symbolTable != NULL){
@@ -132,7 +132,7 @@ void addComponent(ComponentDefRec * component, ComponentType * component_type) {
     if (findObject(new_component->component_name, &type) == NULL) {        
         addElement(symbolTable->components, new_component);
     } else {
-        addError("Duplicate name declaration");
+        addError("Duplicate name declaration", new_component->component_name);
     }
 }
 
@@ -155,7 +155,7 @@ void addNode(DeclareNode * node) {
     if (findObject(new_node->name, &type) == NULL) {
         addElement(symbolTable->nodes, new_node);
     } else {
-        addError("Duplicate name declaration");
+        addError("Duplicate name declaration", new_node->name);
     }
 }
 
@@ -177,7 +177,7 @@ void placeInNextDir(node_t * current, void * object, object_type type) {
         }
     }
 
-    addError("No node connections available. MAX: 4");
+    addError("No node connections available. MAX: 4", current->name);
 }
 
 void concatTo(char * fromObjectName, char * toObjectName) {
@@ -189,25 +189,28 @@ void concatTo(char * fromObjectName, char * toObjectName) {
     void * toObject = findObject(toObjectName, &toType);
 
     if (fromObject == NULL || toObject == NULL) {
-        addError("Concat to: object not found");
+        addError("Concat to: object not found", toObjectName);
         return ;
     }
 
     if (fromObject == toObject) {
-        addError("Concat: cannot concat objects to themselves");
+        addError("Concat: cannot concat objects to themselves", fromObjectName);
         return ;        
     }
 
     if (fromType == COMPONENT_TYPE && toType == COMPONENT_TYPE) {
         component_t *fromComponent = (component_t *)fromObject;
+        if (fromComponent->next != NULL) addError("Component concated 'to' more than once", fromComponent->component_name);
         fromComponent->next_type = COMPONENT_TYPE;
         fromComponent->next = toObject;
         
         component_t *toComponent = (component_t *)toObject;
+        if (toComponent->prev != NULL) addError("Component concated 'from' more than once", toComponent->component_name);
         toComponent->prev_type = COMPONENT_TYPE;
         toComponent->prev = fromObject;
     } else if (fromType == COMPONENT_TYPE && toType == NODE_TYPE) {
         component_t *fromComponent = (component_t *)fromObject;
+        if (fromComponent->next != NULL) addError("Component concated 'to' more than once", fromComponent->component_name);
         fromComponent->next_type = NODE_TYPE;
         fromComponent->next = toObject;
 
@@ -218,6 +221,7 @@ void concatTo(char * fromObjectName, char * toObjectName) {
         placeInNextDir(fromNode, toObject, toType);
 
         component_t *toComponent = (component_t *)toObject;
+        if (toComponent->prev != NULL) addError("Component concated 'from' more than once", toComponent->component_name);
         toComponent->prev_type = NODE_TYPE;
         toComponent->prev = fromObject;
     } else if (fromType == NODE_TYPE && toType == NODE_TYPE) {
@@ -227,7 +231,7 @@ void concatTo(char * fromObjectName, char * toObjectName) {
         node_t *toNode = (node_t *)toObject;
         placeInNextDir(toNode, fromObject, fromType);
     } else {
-        addError("Concat: type not found");
+        addError("Concat: type not found", fromObjectName);
         return ; 
     }
 
@@ -241,18 +245,28 @@ void concatNodes(char * fromNodeName, char * toNodeName){
     object_type toType;
     void * toObject = findObject(toNodeName, &toType);
 
-    if (fromObject == NULL || toObject == NULL) {
-        addError("Concat >: object not found");
+    if (fromObject == NULL) {
+        addError("Concat >: object not found", fromNodeName);
+        return ;
+    }
+
+    if (toObject == NULL) {
+        addError("Concat >: object not found", toNodeName);
         return ;
     }
 
     if (fromObject == toObject) {
-        addError("Concat: cannot concat objects to themselves");
+        addError("Concat: cannot concat objects to themselves", fromNodeName);
         return ;        
     }
 
-    if (fromType != NODE_TYPE || toType != NODE_TYPE) {
-        addError("Concat +: only nodes can be used in + operation");
+    if (fromType != NODE_TYPE) {
+        addError("Concat +: only nodes can be used in + operation", fromNodeName);
+        return ;
+    }
+    
+    if (toType != NODE_TYPE) {
+        addError("Concat +: only nodes can be used in + operation", toNodeName);
         return ;
     }
 
@@ -264,10 +278,12 @@ void concatNodes(char * fromNodeName, char * toNodeName){
     
 }
 
-void addError(char * errorMessage) {
+void addError(char * errorMessage, char * object_name) {
     error_t * new_error = (error_t *)malloc(sizeof(error_t));
     new_error->error_message = (char*)malloc(strlen(errorMessage) + 1);
     strcpy(new_error->error_message, errorMessage);
+
+    new_error->error_object_name = object_name;
 
     addElement(errorList, new_error);
 }
@@ -275,7 +291,7 @@ void addError(char * errorMessage) {
 void printError(const void * data) {
     const struct error_t* error = (const struct error_t*)data;
 
-    printf("[ERROR] %s\n", error->error_message);
+    printf("[ERROR] %s: %s\n", error->error_object_name, error->error_message);
 }
 
 void printErrors() {
@@ -301,10 +317,12 @@ int hasErrors() {
     return 1;
 }
 
-void addUnlinked(char * unlinkedName) {
+void addUnlinked(char * unlinkedMessage, char * unlinkedName) {
     error_t * new_unlinked = (error_t *)malloc(sizeof(error_t));
-    new_unlinked->error_message = (char*)malloc(strlen(unlinkedName) + 1);
-    strcpy(new_unlinked->error_message, unlinkedName);
+    new_unlinked->error_message = (char*)malloc(strlen(unlinkedMessage) + 1);
+    strcpy(new_unlinked->error_message, unlinkedMessage);
+
+    new_unlinked->error_object_name = unlinkedName;
 
     addElement(unlinkedObjects, new_unlinked);
 }
@@ -316,9 +334,9 @@ int checkUnlinked() {
 
     while (current != NULL) {
         component_t * current_component = (component_t *)current->data;
-        if (current_component->prev == NULL && current_component->next == NULL) {
+        if (current_component->prev == NULL || current_component->next == NULL) {
             unlinkedCount++;
-            addUnlinked(current_component->component_name);
+            addUnlinked("Component unlinked in one or more directions", current_component->component_name);
         }
         current = current->next;
     }
@@ -326,11 +344,14 @@ int checkUnlinked() {
     current = symbolTable->nodes->head;
 
     while (current != NULL) {
+        int linked_count = 0;
         node_t * current_node = (node_t *)current->data;
-        if (current_node->dir[0] == NULL && current_node->dir[1] == NULL && current_node->dir[2] == NULL && current_node->dir[3] == NULL) {
-            unlinkedCount++;
-            addUnlinked(current_node->name);
+        for(int i = 0; i < 4; i++ ) {
+            if (current_node->dir[i] != NULL) linked_count++;
         }
+
+        if(linked_count < 2) addUnlinked("Node linked to less that two objects", current_node->name);
+
         current = current->next;
     }
 
@@ -341,7 +362,7 @@ void printUnlinked() {
     Node * current = unlinkedObjects->head;
 
     if (current != NULL) {
-        printf("Unlinked objects: \n");
+        printf("Unlinked objects found: \n");
 
         while (current != NULL) {
             printError(current->data);

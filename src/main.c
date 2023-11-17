@@ -28,7 +28,7 @@ const int main(const int argumentCount, const char ** arguments) {
 
 	int preResult = result;
 
-	if (/*checkUnlinked() != 0 ||*/ hasErrors()) {
+	if (checkUnlinked() != 0 || hasErrors()) {
 		state.succeed = false;
 	}
 
@@ -43,7 +43,7 @@ const int main(const int argumentCount, const char ** arguments) {
 			else {
 				LogError("Se produjo un error en la aplicacion.");
 				printErrors();
-				// printUnlinked();
+				printUnlinked();
 				result = -1;
 				break;
 			}

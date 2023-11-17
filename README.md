@@ -1,6 +1,5 @@
-[![✗](https://img.shields.io/badge/Release-v0.3.0-ffb600.svg?style=for-the-badge)](https://github.com/agustin-golmar/Flex-Bison-Compiler/releases)
 
-# Compilador Flex/Bison
+# Sirquix: circuit latex compiler
 
 Un compilador vacío de ejemplo construido con Flex y Bison.
 
@@ -38,7 +37,14 @@ Luego se deberá abrir la solución generada `bin\Compiler.sln` con el IDE _Micr
 Para compilar un programa, primero cree un archivo vacío denominado `program` (o el nombre que desee), con el siguiente contenido:
 
 ```
-123123 + 123 - 2 * (454 + 890 / 89)
+resistor r1;
+ammeter a;
+inductor L;
+capacitor C;
+node n1, n2;
+
+n1>C>L>a>r1>n2;
+
 ```
 
 Luego, ejecute el compilador desde el directorio raíz del proyecto, o desde cualquier otro lugar indicando el path hacia el script `start.sh` y pasando por parámetro el path hacia el programa a compilar:

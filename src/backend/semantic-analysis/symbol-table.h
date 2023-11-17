@@ -46,7 +46,8 @@ typedef struct error_t error_t;
 struct error_t {
     char *error_message;
 
-    // in the future we could add the component where the error happened
+    // in the future we could add more info about the component
+    char * error_object_name;
 };
 
 //inicia la tabla de simbolos
