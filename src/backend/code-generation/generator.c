@@ -1,6 +1,6 @@
 #include "../support/logger.h"
 #include "generator.h"
-
+#define MAX_LINES 10
 /**
  * Implementación de "generator.h".
  */
@@ -72,7 +72,7 @@ void closeComponent(FILE * filePointer) {
 	fprintf(filePointer,"\t\\draw %s -- (%d,%d) -- (%d,%d) -- (0,0);\n", current_coord, x, y-2, 0, y-2);
 }
 
-#define MAX_LINES 10
+
 
 void Generator(int result, symbol_t * symbolTable) {
 	LogInfo("La expresion genera un circuito valido. Compilacion terminada con codigo: '%d'.", result);

@@ -21,3 +21,5 @@ program
 
 #vscode workspace
 *.code-workspace
+
+*.tex

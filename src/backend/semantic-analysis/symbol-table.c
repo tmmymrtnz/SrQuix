@@ -126,6 +126,8 @@ void addComponent(ComponentDefRec * component, ComponentType * component_type) {
     new_component->component_name = (char*)malloc(strlen(component->component_name) + 1);
     strcpy(new_component->component_name, component->component_name);
     new_component->constant = component->constant;
+    new_component->prev = NULL;
+    new_component->next = NULL;
 
     object_type type;
 
@@ -149,6 +151,9 @@ void addNode(DeclareNode * node) {
     node_t * new_node = (node_t *)malloc(sizeof(node_t));
     new_node->name = (char*)malloc(strlen(node->name) + 1);
     strcpy(new_node->name, node->name);
+    for(int i = 0; i < 4; i++ ) {
+        new_node->dir[i] = NULL;
+    }
 
     object_type type;
 
