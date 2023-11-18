@@ -8,7 +8,7 @@
 %union {
 	// No-terminales (backend).
 	Program * program;
-	int constant;
+	float constant;
 	char * component_name;
 	char * node_name;
 	Declaration * declaration;
@@ -19,6 +19,7 @@
 	// SemiColonText semi_colon_text;
 	DeclareNode * coma_node;
 	ComponentType * component_type;
+	ParameterType * parameter_type;
 	Boolean * boolean;
 	DeclareNode * declare_node;
 
@@ -193,8 +194,8 @@ concat: component_name GREATER_THAN concat							{ $$ = ConcatToGrammarAction($1
 end_of_line: SEMICOLON												{ $$ = NULL; }
 	;
 
-constant: INTEGER													{ $$ = ConstantGrammarAction($1); }
-	| REAL															{ $$ = ConstantGrammarAction($1); }
+constant: INTEGER													{ $$ = ConstantIntegerGrammarAction($1); }
+	| REAL															{ $$ = ConstantRealGrammarAction($1); }
 	;
 
 component_name: TEXT												{ $$ = ComponentNameGrammarAction($1); }

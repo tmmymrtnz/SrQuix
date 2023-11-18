@@ -25,7 +25,7 @@ DeclareType * DeclareTypeGrammarAction(ComponentType * componentType, ComponentD
 
 ComponentDefRec * ComaTextGrammarAction(const char * componentName, ComponentDefRec * component_def_rec);
 
-ComponentDefRec * ComponentDefGrammarAction(const char * componentName, const int value, ComponentDefRec * component_def_rec);
+ComponentDefRec * ComponentDefGrammarAction(const char * componentName, const float value, ComponentDefRec * component_def_rec);
 
 ComponentType * ComponentTypeResistorGrammarAction();
 ComponentType * ComponentTypeBatteryGrammarAction();
@@ -51,7 +51,8 @@ Concat * ConcatToGrammarAction(char * componentName, const Concat * concat);
 
 Concat * ConcatPlusGrammarAction(char * componentName, const Concat * concat);
 
-int ConstantGrammarAction(const int value);
+float ConstantRealGrammarAction(const float value);
+float ConstantIntegerGrammarAction(const int value);
 
 char * ComponentNameGrammarAction(char * componentName);
 

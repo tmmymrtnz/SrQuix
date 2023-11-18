@@ -23,7 +23,8 @@ typedef struct node_t node_t;
 
 struct component_t {
     char *component_name;
-    int constant;
+    float constant;
+    Boolean showlabel;
 
     ComponentType * component_type;
 

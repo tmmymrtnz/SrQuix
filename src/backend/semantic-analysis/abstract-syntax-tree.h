@@ -13,7 +13,7 @@ typedef struct Expression Expression;
 * de dato y, por lo tanto, su nodo en el AST (Árbol de Sintaxis Abstracta).
 */
 typedef struct {
-	int value;
+	float value;
 } Constant;
 
 /**
@@ -37,7 +37,7 @@ typedef enum {
 	T_SINGLEPHASEVOL
 } ComponentType;
 
-typedef enum {
+typedef enum Boolean{
 	T_FALSE,
 	T_TRUE
 } Boolean;
@@ -63,7 +63,7 @@ typedef struct ComponentDefRec ComponentDefRec;
 
 struct ComponentDefRec{
 	const char * component_name;
-	int constant;
+	float constant;
 
 	ComponentDefRec * component_def_rec;
 };

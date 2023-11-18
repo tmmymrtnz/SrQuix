@@ -52,7 +52,7 @@ int compareNodeByName(const void* a, const void* b) {
 // Function to print an element of type struct component_t
 void printComponent(const void* data) {
     const struct component_t* component = (const struct component_t*)data;
-    printf("Component Name: %s, Constant: %d\n", component->component_name, component->constant);
+    printf("Component Name: %s, Constant: %.3f\n", component->component_name, component->constant);
 
     printf("This dir: %p\n", component);
 
@@ -119,6 +119,44 @@ void * findObject(char * name, object_type * type) {
     return NULL;
 }
 
+void setShowlabel(char * name, Boolean showlabel) {
+    object_type type;
+    void * object = findObject(name, &type);
+
+    if (object == NULL) {
+        addError("Showlabel: object not found", name);
+        return ;
+    }
+
+    if (type == COMPONENT_TYPE) {
+        component_t * component = (component_t *)object;
+        component->showlabel = showlabel;
+    } else if (type == NODE_TYPE) {
+        return;
+    } else {
+        addError("Showlabel: type not found", name);
+        return ;
+    }
+}
+
+void addParam(const ComponentDefRec * component, const Parameter * parameter) {
+    // there is only one parameter: showlabel. If there are more, then bison caught the error earlier
+    setShowlabel(component->component_name, *parameter->boolean);
+}
+
+void addParams(ComponentDefRec * component_def_rec, ComaParameter * coma_parameter) {
+    object_type type;
+    char * name = malloc(strlen(component_def_rec->component_name) + 1);
+    strcpy(name, component_def_rec->component_name);
+    component_t * component = (component_t *)findObject(name, &type);
+    if(component == NULL) {
+        addError("Component not found", component->component_name);
+        return ;
+    }
+    // if there were more parameters, then bison caught the error earlier. Currently there is only one parameter: showlabel
+    // if we add more parameters, then we need to iterate through the coma_parameter list
+    addParam(component_def_rec, coma_parameter->parameter);
+}
 
 void addComponent(ComponentDefRec * component, ComponentType * component_type) {
     component_t * new_component = (component_t *)malloc(sizeof(component_t));
@@ -182,7 +220,7 @@ void placeInNextDir(node_t * current, void * object, object_type type) {
         }
     }
 
-    addError("No node connections available. MAX: 4", current->name);
+    addError("No node connections availabel. MAX: 4", current->name);
 }
 
 void concatTo(char * fromObjectName, char * toObjectName) {

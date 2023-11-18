@@ -134,18 +134,22 @@ DeclareType * DeclareTypeGrammarAction(ComponentType * componentType, ComponentD
 
 	addComponents(new_declare_type->component_def_rec, componentType);
 
+	if(params != NULL){
+		addParams(new_declare_type->component_def_rec, params->coma_parameter);
+	}
+
 	return new_declare_type;
 }
 
 ComponentDefRec * ComaTextGrammarAction(const char * componentName, ComponentDefRec * component_def_rec){
 	ComponentDefRec * new_component_def_rec = (ComponentDefRec *) malloc(sizeof(ComponentDefRec));
 	new_component_def_rec->component_name = componentName;
-	// new_component_def_rec->constant = NULL;
+	new_component_def_rec->constant = 0.0;
 	new_component_def_rec->component_def_rec = component_def_rec;
 	return new_component_def_rec;
 }
 
-ComponentDefRec * ComponentDefGrammarAction(const char * componentName, const int value, ComponentDefRec * component_def_rec){
+ComponentDefRec * ComponentDefGrammarAction(const char * componentName, const float value, ComponentDefRec * component_def_rec){
 	ComponentDefRec * new_component_def_rec = (ComponentDefRec *) malloc(sizeof(ComponentDefRec));
 	new_component_def_rec->component_name = componentName;
 	new_component_def_rec->constant = value;
@@ -223,7 +227,11 @@ Concat * ConcatPlusGrammarAction(char * componentName, const Concat * concat){
 }
 
 
-int ConstantGrammarAction(const int value){
+float ConstantIntegerGrammarAction(const int value){
+	return (float)value;
+}
+
+float ConstantRealGrammarAction(const float value){
 	return value;
 }
 

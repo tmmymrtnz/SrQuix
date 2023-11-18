@@ -1,9 +1,20 @@
 #include "../support/logger.h"
 #include "generator.h"
 #define MAX_LINES 10
+#define EPSILON 0.0001
 /**
  * Implementación de "generator.h".
  */
+
+static int compareFloat(float a, float b) {
+	if (fabs(a - b) < EPSILON) {
+		return 0;
+	} else if (a > b) {
+		return 1;
+	} else {
+		return -1;
+	}
+}
 
 ComponentTypeLatex typeTable[] = {
 	{T_RESISTOR, 	"R",		"l",	"\\Omega"},
@@ -61,10 +72,14 @@ char * goRight() {
 
 
 void generateComponent(component_t * component, FILE * filePointer) {
-	if (component->constant == 0) {
+	if(component->showlabel && compareFloat(component->constant, 0) != 0){
+		fprintf(filePointer,"\n\t\tto[%s, l=$%s\\:%.3f%s$] %s", getComponent(component->component_type), component->component_name, component->constant, getMeasurement(component->component_type), goRight());
+	} else if(component->showlabel && compareFloat(component->constant, 0) == 0){
 		fprintf(filePointer,"\n\t\tto[%s, l=$%s$] %s", getComponent(component->component_type), component->component_name, goRight());
+	} else if(!component->showlabel && compareFloat(component->constant, 0) != 0) {
+		fprintf(filePointer,"\n\t\tto[%s, l=$%.3f\\:%s$] %s", getComponent(component->component_type), component->constant, getMeasurement(component->component_type), goRight());
 	} else {
-		fprintf(filePointer,"\n\t\tto[%s, l=$%d\\:%s$] %s", getComponent(component->component_type), component->constant, getMeasurement(component->component_type), goRight());
+		fprintf(filePointer,"\n\t\tto[%s] %s", getComponent(component->component_type), goRight());
 	}
 }
 
