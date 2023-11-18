@@ -137,6 +137,14 @@ token IntegerPatternAction(const char * lexeme, const int length) {
 	return INTEGER;
 }
 
+token FloatPatternAction(const char * lexeme, const int length) {
+	LogDebug("[Flex] FloatPatternAction: '%s' (length = %d).", lexeme, length);
+	char * lexemeCopy = copyLexeme(lexeme, length);
+	yylval.real = atof(lexemeCopy);
+	free(lexemeCopy);
+	return REAL;
+}
+
 token TextPatternAction(const char * lexeme, const int length) {
 	LogDebug("[Flex] TextPatternAction: '%s' (length = %d).", lexeme, length);
 	char * lexemeCopy = copyLexeme(lexeme, length);

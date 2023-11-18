@@ -56,6 +56,7 @@
 	// Terminales.
 	token token;
 	int integer;
+	float real;
 	char * text;
 }
 
@@ -94,6 +95,7 @@
 %token <text> CLOSE_BRACKET
 
 %token <integer> INTEGER
+%token <real> REAL
 %token <text> TEXT
 
 
@@ -192,6 +194,7 @@ end_of_line: SEMICOLON												{ $$ = NULL; }
 	;
 
 constant: INTEGER													{ $$ = ConstantGrammarAction($1); }
+	| REAL															{ $$ = ConstantGrammarAction($1); }
 	;
 
 component_name: TEXT												{ $$ = ComponentNameGrammarAction($1); }

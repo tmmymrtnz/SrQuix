@@ -59,6 +59,7 @@ whitespace		[ \f\n\r\t\v]
 ";"											{ return SemicolonPatternAction(); }
 
 {digit}+									{ return IntegerPatternAction(yytext, yyleng); }
+{digit}+"."{digit}+							{ return FloatPatternAction(yytext, yyleng); }
 
 {text}+	    			                	{ return TextPatternAction(yytext, yyleng); }
 

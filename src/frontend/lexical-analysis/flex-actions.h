@@ -52,6 +52,7 @@ token FalsePatternAction();
 
 token TextPatternAction(const char * lexeme, const int length);
 token IntegerPatternAction(const char * lexeme, const int length);
+token FloatPatternAction(const char * lexeme, const int length);
 
 token CloseParenthesisPatternAction();
 token OpenParenthesisPatternAction();
