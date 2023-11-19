@@ -107,13 +107,17 @@ void generateComponent(component_t *component, FILE *filePointer) {
     char* componentType = getComponent(component->component_type);
     char* goTo = goRight();
 
+	if (compareFloat(component->constant, 0) == 0) {
+		// no value assigned
+	} else if (compareFloat(component->constant, floor(component->constant)) == 0){
+		sprintf(valueFormat, "\\:%d%s", (int)component->constant, getMeasurement(component->component_type));
+	} else {
+		sprintf(valueFormat, "\\:%.3f%s", component->constant, getMeasurement(component->component_type));
+	}
+
     if (component->showName) {
         sprintf(nameFormat, "%s", component->component_name);
     }
-
-	if (compareFloat(component->constant, 0) != 0) {
-        sprintf(valueFormat, "\\:%.3f%s", component->constant, getMeasurement(component->component_type));
-	}
 
     fprintf(filePointer, "\n\t\tto[%s, l=$%s%s$] %s",
             componentType, nameFormat, valueFormat, goTo);
