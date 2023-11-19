@@ -36,11 +36,12 @@ whitespace		[ \f\n\r\t\v]
 
 "resistor"							    	{ return ResistorPatternAction(); }
 "battery"									{ return BatteryPatternAction(); }
-"inductor"								{ return InductorPatternAction(); }
-"capacitor"								{ return CapacitorPatternAction(); }
-"ammeter"                                { return AmmeterPatternAction(); }
-"voltmeter"                              { return VoltmeterPatternAction(); }
-"ohmmeter"                               { return OhmmeterPatternAction(); }
+"inductor"							    	{ return InductorPatternAction(); }
+"capacitor"							    	{ return CapacitorPatternAction(); }
+"ammeter"                                   { return AmmeterPatternAction(); }
+"voltmeter"                                 { return VoltmeterPatternAction(); }
+"lamp"                                      { return LampPatternAction(); }
+"generic"                                   { return GenericCompPatternAction(); }
 
 ","                                         { return ComaPatternAction(); }
 

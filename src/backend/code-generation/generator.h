@@ -5,6 +5,8 @@
 
 #include "../semantic-analysis/symbol-table.h"
 
+#define MAX_LABEL_SIZE 64
+
 typedef struct ComponentTypeLatex {
 	ComponentType component_type;
 	char * latex_value;
@@ -28,10 +30,5 @@ typedef struct ComponentLine {
 } ComponentLine;
 
 void Generator(int result, symbol_t * symbolTable);
-
-
-void connectNodes(ComponentLine component_lines[], int line_count,  FILE * filePointer);
-
-void printLine(ComponentLine component_line);
 
 #endif

@@ -30,8 +30,8 @@ token InductorPatternAction();
 token CapacitorPatternAction();
 token AmmeterPatternAction();
 token VoltmeterPatternAction();
-token OhmmeterPatternAction();
-token SinglePhaseVolPatternAction();
+token LampPatternAction();
+token GenericCompPatternAction();
 
 token ComaPatternAction();
 token EqualPatternAction();

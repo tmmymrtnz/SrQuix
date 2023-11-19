@@ -33,8 +33,8 @@ typedef enum {
 	T_CAPACITOR,
 	T_AMMETER,
 	T_VOLTMETER,
-	T_OHMMETER,
-	T_SINGLEPHASEVOL
+	T_LAMP,
+	T_GENERIC
 } ComponentType;
 
 typedef enum Boolean{

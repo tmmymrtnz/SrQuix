@@ -115,15 +115,15 @@ ComponentType * ComponentTypeVoltmeterGrammarAction(){
 	return new_component_type;
 }
 
-ComponentType * ComponentTypeOhmMeterGrammarAction(){
+ComponentType * ComponentTypeLampGrammarAction(){
 	ComponentType * new_component_type = (ComponentType *) malloc(sizeof(ComponentType));
-	* new_component_type = T_OHMMETER;
+	* new_component_type = T_LAMP;
 	return new_component_type;
 }
 
-ComponentType * ComponentTypeSinglePhaseVolGrammarAction(){
+ComponentType * ComponentTypeGenericGrammarAction(){
 	ComponentType * new_component_type = (ComponentType *) malloc(sizeof(ComponentType));
-	* new_component_type = T_SINGLEPHASEVOL;
+	* new_component_type = T_GENERIC;
 	return new_component_type;
 }
 

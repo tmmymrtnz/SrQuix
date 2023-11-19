@@ -31,8 +31,8 @@ ComponentType * ComponentTypeInductorGrammarAction();
 ComponentType * ComponentTypeCapacitorGrammarAction();
 ComponentType * ComponentTypeAmmeterGrammarAction();
 ComponentType * ComponentTypeVoltmeterGrammarAction();
-ComponentType * ComponentTypeOhmMeterGrammarAction();
-ComponentType * ComponentTypeSinglePhaseVolGrammarAction();
+ComponentType * ComponentTypeLampGrammarAction();
+ComponentType * ComponentTypeGenericGrammarAction();
 
 Params * ParamsGrammarAction(ComaParameter * comaParameter);
 

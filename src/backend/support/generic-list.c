@@ -9,6 +9,7 @@ List* initList() {
         return NULL; // Memory allocation failed
     }
     list->head = NULL;
+    list->size = 0;
     return list;
 }
 
@@ -25,6 +26,7 @@ int addElement(List* list, void* data) {
     newNode->data = data;
     newNode->next = list->head;
     list->head = newNode;
+    list->size++;
     return 1; // Success
 }
 
@@ -70,4 +72,12 @@ void freeList(List* list) {
         current = next;
     }
     free(list);
+}
+
+// Function to get the size of the list
+int getListSize(List* list) {
+    if (list == NULL) {
+        return -1; // Invalid list
+    }
+    return list->size;
 }

@@ -6,6 +6,10 @@
  * Implementación de "generator.h".
  */
 
+void generateComponent(component_t * component, FILE * filePointer);
+void connectNodes(ComponentLine component_lines[], int line_count,  FILE * filePointer);
+void printLine(ComponentLine component_line);
+
 static int compareFloat(float a, float b) {
 	if (fabs(a - b) < EPSILON) {
 		return 0;
@@ -22,9 +26,9 @@ ComponentTypeLatex typeTable[] = {
 	{T_INDUCTOR, 	"inductor",	"l",	"H"}, 
 	{T_CAPACITOR, 	"C", 		"l",	"F"}, 
 	{T_AMMETER, 	"ammeter", 	"i_",	"mA"},
-	{T_VOLTMETER, 	"voltmeter","l",	"kV"},
-	{T_OHMMETER, 	"R",		"l",	"sus"},
-	{T_SINGLEPHASEVOL, "R", 	"l",	"sus"},
+	{T_VOLTMETER, 	"voltmeter","l",	"V"},
+	{T_LAMP, 		"lamp",		"l",	"W"},
+	{T_GENERIC, 	"generic", 	"l",	""},
 	{0 , NULL}
 };
 
@@ -55,6 +59,7 @@ char * getMeasurement(ComponentType * component_type) {
 
 int x = 0;
 int y = 0;
+int reachedComponents = 0;
 
 char * current_coord;
 
@@ -70,22 +75,52 @@ char * goRight() {
 	return current_coord;
 }
 
-
-void generateComponent(component_t * component, FILE * filePointer) {
-	if(component->showlabel && compareFloat(component->constant, 0) != 0){
-		fprintf(filePointer,"\n\t\tto[%s, l=$%s\\:%.3f%s$] %s", getComponent(component->component_type), component->component_name, component->constant, getMeasurement(component->component_type), goRight());
-	} else if(component->showlabel && compareFloat(component->constant, 0) == 0){
-		fprintf(filePointer,"\n\t\tto[%s, l=$%s$] %s", getComponent(component->component_type), component->component_name, goRight());
-	} else if(!component->showlabel && compareFloat(component->constant, 0) != 0) {
-		fprintf(filePointer,"\n\t\tto[%s, l=$%.3f\\:%s$] %s", getComponent(component->component_type), component->constant, getMeasurement(component->component_type), goRight());
-	} else {
-		fprintf(filePointer,"\n\t\tto[%s] %s", getComponent(component->component_type), goRight());
-	}
-}
-
 void closeComponent(FILE * filePointer) {
-	fprintf(filePointer,"\t\\draw %s -- (%d,%d) -- (%d,%d) -- (0,0);\n", current_coord, x, y-2, 0, y-2);
+	fprintf(filePointer,"\n\t\\draw %s -- (%d,%d) -- (%d,%d) -- (0,0);", current_coord, x, y-2, 0, y-2);
 }
+
+void generateComponentList(Node * component_node, FILE * filePointer) {
+	if (component_node == NULL) return;
+
+	component_t * start_component = (component_t *)component_node->data;
+
+	fprintf(filePointer,"\n\t\\draw %s", currentPos());
+
+	generateComponent(start_component, filePointer);
+	component_t * current_component = start_component->next;
+
+	while (current_component != NULL && current_component != start_component) {
+		generateComponent(current_component, filePointer);
+		current_component = current_component->next;
+	}
+	
+	fprintf(filePointer,";");
+
+	closeComponent(filePointer);
+}
+
+
+void generateComponent(component_t *component, FILE *filePointer) {
+    char nameFormat[MAX_LABEL_SIZE] = "";
+	char valueFormat[MAX_LABEL_SIZE] = "";
+
+    char* componentType = getComponent(component->component_type);
+    char* goTo = goRight();
+
+    if (component->showName) {
+        sprintf(nameFormat, "%s", component->component_name);
+    }
+
+	if (compareFloat(component->constant, 0) != 0) {
+        sprintf(valueFormat, "\\:%.3f%s", component->constant, getMeasurement(component->component_type));
+	}
+
+    fprintf(filePointer, "\n\t\tto[%s, l=$%s%s$] %s",
+            componentType, nameFormat, valueFormat, goTo);
+
+	reachedComponents++;
+}
+
 
 
 
@@ -120,6 +155,10 @@ void Generator(int result, symbol_t * symbolTable) {
 
 	Node * current_node = (Node *)symbolTable->nodes->head;
 
+	if (current_node == NULL) {
+		generateComponentList(symbolTable->components->head, filePointer);
+	}
+
 	while (current_node != NULL) {
 		for (int i = 0; i < 4; i++){
 			if (		((node_t *)current_node->data)->dir[i] != NULL &&
@@ -153,14 +192,11 @@ void Generator(int result, symbol_t * symbolTable) {
 
 				fprintf(filePointer,"\n\t\tnode[circ, label={above: %s}] {};", circuit_lines[current_line].end_node->name );
 
-				// printLine(circuit_lines[current_line]);
-
 				x = 0;
 				y -= 2;
 				current_line++;
 				
 			} else if (((node_t *)current_node->data)->dir[i] != NULL && ((node_t *)current_node->data)->dir_type[i] == NODE_TYPE) {
-				// printf("\nonly nodes in direction\n");
 
 				int exists = 0;
 				for (int k = 0; k < current_line; k++) {
@@ -199,7 +235,11 @@ void Generator(int result, symbol_t * symbolTable) {
 
 	connectNodes(circuit_lines, current_line, filePointer);
 
-	fprintf(filePointer,"\n\\end{circuitikz}\n\n\\end{document}");
+	fprintf(filePointer,"\n\\end{circuitikz}\n");
+
+	if (getListSize(symbolTable->components) != reachedComponents) fprintf(filePointer, "\n\tRuntime error, could not reach all components"); 
+
+	fprintf(filePointer, "\n\\end{document}");
 
 	fclose(filePointer);
 	free(current_coord);

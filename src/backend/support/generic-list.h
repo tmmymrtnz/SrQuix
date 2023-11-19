@@ -10,6 +10,7 @@ typedef struct Node {
 // Define a list structure
 typedef struct {
     Node* head;
+    int size;
 } List;
 
 // Function to initialize a list
@@ -26,5 +27,8 @@ void printList(List* list, void (*printElement)(const void*));
 
 // Function to free the list and its elements
 void freeList(List* list);
+
+// Function to get the size of the list
+int getListSize(List* list);
 
 #endif // GENERIC_LIST_H

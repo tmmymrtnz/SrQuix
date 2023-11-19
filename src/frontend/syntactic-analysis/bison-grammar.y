@@ -68,9 +68,9 @@
 %token <component_type> INDUCTOR
 %token <component_type> CAPACITOR
 %token <component_type> VOLTMETER
-%token <component_type> OHMMETER
 %token <component_type> AMMETER
-%token <component_type> SINGLEPHASEVOL
+%token <component_type> LAMP
+%token <component_type> GENERIC_COMP
 
 %token <component_def_onlyname> COMA
 %token <token> EQUAL  // eeee ??
@@ -157,8 +157,8 @@ component_type: RESISTOR											{ $$ = ComponentTypeResistorGrammarAction();	
 	| CAPACITOR														{ $$ = ComponentTypeCapacitorGrammarAction(); 	}
 	| AMMETER														{ $$ = ComponentTypeAmmeterGrammarAction(); 	}
 	| VOLTMETER														{ $$ = ComponentTypeVoltmeterGrammarAction(); 	}
-	| OHMMETER														{ $$ = ComponentTypeOhmMeterGrammarAction(); 	}
-	| SINGLEPHASEVOL												{ $$ = ComponentTypeSinglePhaseVolGrammarAction(); }
+	| LAMP															{ $$ = ComponentTypeLampGrammarAction(); 	}
+	| GENERIC_COMP													{ $$ = ComponentTypeGenericGrammarAction(); }
 	;
 
 params: OPEN_PARENTHESIS parameter_def_rec CLOSE_PARENTHESIS		{ $$ = ParamsGrammarAction($2); }

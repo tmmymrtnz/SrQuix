@@ -119,29 +119,29 @@ void * findObject(char * name, object_type * type) {
     return NULL;
 }
 
-void setShowlabel(char * name, Boolean showlabel) {
+void setShowLabel(char * name, Boolean showName) {
     object_type type;
     void * object = findObject(name, &type);
 
     if (object == NULL) {
-        addError("Showlabel: object not found", name);
+        addError("ShowLabel: object not found", name);
         return ;
     }
 
     if (type == COMPONENT_TYPE) {
         component_t * component = (component_t *)object;
-        component->showlabel = showlabel;
+        component->showName = showName;
     } else if (type == NODE_TYPE) {
         return;
     } else {
-        addError("Showlabel: type not found", name);
+        addError("ShowLabel: type not found", name);
         return ;
     }
 }
 
 void addParam(const ComponentDefRec * component, const Parameter * parameter) {
-    // there is only one parameter: showlabel. If there are more, then bison caught the error earlier
-    setShowlabel(component->component_name, *parameter->boolean);
+    // there is only one parameter: showName. If there are more, then bison caught the error earlier
+    setShowLabel(component->component_name, *parameter->boolean);
 }
 
 void addParams(ComponentDefRec * component_def_rec, ComaParameter * coma_parameter) {
@@ -153,7 +153,7 @@ void addParams(ComponentDefRec * component_def_rec, ComaParameter * coma_paramet
         addError("Component not found", component->component_name);
         return ;
     }
-    // if there were more parameters, then bison caught the error earlier. Currently there is only one parameter: showlabel
+    // if there were more parameters, then bison caught the error earlier. Currently there is only one parameter: showName
     // if we add more parameters, then we need to iterate through the coma_parameter list
     ComponentDefRec * current_component = component_def_rec;
     while (current_component != NULL) {
@@ -170,6 +170,7 @@ void addComponent(ComponentDefRec * component, ComponentType * component_type) {
     new_component->constant = component->constant;
     new_component->prev = NULL;
     new_component->next = NULL;
+    new_component->showName = 1;
 
     object_type type;
 
@@ -397,7 +398,10 @@ int checkUnlinked() {
             if (current_node->dir[i] != NULL) linked_count++;
         }
 
-        if(linked_count < 2) addUnlinked("Node linked to less that two objects", current_node->name);
+        if(linked_count < 2) {
+            unlinkedCount++;
+            addUnlinked("Node linked to less than two objects", current_node->name);
+        }
 
         current = current->next;
     }

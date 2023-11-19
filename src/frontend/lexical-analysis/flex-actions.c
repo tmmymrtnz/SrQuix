@@ -171,16 +171,16 @@ token VoltmeterPatternAction() {
 	return VOLTMETER;
 }
 
-token OhmmeterPatternAction() {
-	LogDebug("[Flex] OhmmeterPatternAction: 'ohmmeter'.");
-	yylval.token = OHMMETER;
-	return OHMMETER;
+token LampPatternAction() {
+	LogDebug("[Flex] LampPatternAction: 'lamp'.");
+	yylval.token = LAMP;
+	return LAMP;
 }
 
-token SinglePhaseVolPatternAction() {
-	LogDebug("[Flex] SinglePhaseVolPatternAction: 'node'.");
-	yylval.token = SINGLEPHASEVOL;
-	return SINGLEPHASEVOL;
+token GenericCompPatternAction() {
+	LogDebug("[Flex] GenericCompPatternAction: 'generic'.");
+	yylval.token = GENERIC_COMP;
+	return GENERIC_COMP;
 }
 
 token UnknownPatternAction(const char * lexeme, const int length) {
