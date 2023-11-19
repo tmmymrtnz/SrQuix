@@ -94,7 +94,7 @@ void Generator(int result, symbol_t * symbolTable) {
 
  	FILE *filePointer; 
 
-    filePointer = fopen("sirquix.tex", "w");
+    filePointer = fopen("SrQuix.tex", "w");
 
 	 if (filePointer == NULL) {
         printf("Unable to create the LaTeX file.\n");

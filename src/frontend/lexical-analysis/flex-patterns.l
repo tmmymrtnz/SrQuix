@@ -18,6 +18,7 @@
 
 /* Patrones reutilizables. */
 digit			[0-9]
+char            [A-Za-z]
 text            [A-Za-z0-9]
 endline			[\n]
 whitespace		[ \f\n\r\t\v]
@@ -61,7 +62,7 @@ whitespace		[ \f\n\r\t\v]
 {digit}+									{ return IntegerPatternAction(yytext, yyleng); }
 {digit}+"."{digit}+							{ return FloatPatternAction(yytext, yyleng); }
 
-{text}+	    			                	{ return TextPatternAction(yytext, yyleng); }
+{char}{text}*	    			            { return TextPatternAction(yytext, yyleng); }
 
 {whitespace}+								{ IgnoredPatternAction(yytext, yyleng); }
 

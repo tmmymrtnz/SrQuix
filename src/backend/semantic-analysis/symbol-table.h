@@ -66,6 +66,8 @@ void concatTo(char * fromObjectName, char * toObjectName);
 
 void concatNodes(char * fromNodeName, char * toNodeName);
 
+void addParams(ComponentDefRec * component_def_rec, ComaParameter * coma_parameter);
+
 symbol_t * getSymbolTable();
 
 void printErrors();

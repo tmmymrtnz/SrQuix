@@ -1,6 +1,8 @@
 #ifndef GENERATOR_HEADER
 #define GENERATOR_HEADER
 
+#include <math.h>
+
 #include "../semantic-analysis/symbol-table.h"
 
 typedef struct ComponentTypeLatex {

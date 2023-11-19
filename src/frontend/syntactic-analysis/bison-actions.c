@@ -33,6 +33,7 @@ void yyerror(const char * string) {
 */
 Program * ProgramGrammarAction(const Declaration * declaration) {
 	Program * new_program = (Program *) malloc(sizeof(Program));
+	new_program->declaration = declaration;
 	int value = 0; // como representamos value con nuestra estructura?
 	
 	LogDebug("[Bison] ProgramGrammarAction(%d)", value);
@@ -141,15 +142,8 @@ DeclareType * DeclareTypeGrammarAction(ComponentType * componentType, ComponentD
 	return new_declare_type;
 }
 
-ComponentDefRec * ComaTextGrammarAction(const char * componentName, ComponentDefRec * component_def_rec){
-	ComponentDefRec * new_component_def_rec = (ComponentDefRec *) malloc(sizeof(ComponentDefRec));
-	new_component_def_rec->component_name = componentName;
-	new_component_def_rec->constant = 0.0;
-	new_component_def_rec->component_def_rec = component_def_rec;
-	return new_component_def_rec;
-}
 
-ComponentDefRec * ComponentDefGrammarAction(const char * componentName, const float value, ComponentDefRec * component_def_rec){
+ComponentDefRec * ComponentDefGrammarAction(char * componentName, const float value, ComponentDefRec * component_def_rec){
 	ComponentDefRec * new_component_def_rec = (ComponentDefRec *) malloc(sizeof(ComponentDefRec));
 	new_component_def_rec->component_name = componentName;
 	new_component_def_rec->constant = value;
@@ -158,7 +152,7 @@ ComponentDefRec * ComponentDefGrammarAction(const char * componentName, const fl
 }
 
 
-Params * ParamsGrammarAction(const ComaParameter * comaParameter){
+Params * ParamsGrammarAction(ComaParameter * comaParameter){
 	Params * new_params = (Params *) malloc(sizeof(Params));
 	new_params->coma_parameter = comaParameter;
 	return new_params;

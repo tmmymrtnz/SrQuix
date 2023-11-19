@@ -23,9 +23,7 @@ Declaration * DeclarationConcatGrammarAction(const Concat * concat, const Declar
 
 DeclareType * DeclareTypeGrammarAction(ComponentType * componentType, ComponentDefRec * component_def_rec, const Params * params);
 
-ComponentDefRec * ComaTextGrammarAction(const char * componentName, ComponentDefRec * component_def_rec);
-
-ComponentDefRec * ComponentDefGrammarAction(const char * componentName, const float value, ComponentDefRec * component_def_rec);
+ComponentDefRec * ComponentDefGrammarAction(char * componentName, const float value, ComponentDefRec * component_def_rec);
 
 ComponentType * ComponentTypeResistorGrammarAction();
 ComponentType * ComponentTypeBatteryGrammarAction();
@@ -36,7 +34,7 @@ ComponentType * ComponentTypeVoltmeterGrammarAction();
 ComponentType * ComponentTypeOhmMeterGrammarAction();
 ComponentType * ComponentTypeSinglePhaseVolGrammarAction();
 
-Params * ParamsGrammarAction(const ComaParameter * comaParameter);
+Params * ParamsGrammarAction(ComaParameter * comaParameter);
 
 ComaParameter * ComaParameterGrammarAction(const Parameter * parameter, const ComaParameter * comaParameter);
 

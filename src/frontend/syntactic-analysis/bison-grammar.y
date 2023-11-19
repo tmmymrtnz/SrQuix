@@ -13,11 +13,10 @@
 	char * node_name;
 	Declaration * declaration;
 	Concat * concat;
-	void * end_of_line;
 	DeclareType * declare_type;
-	ComponentDefRec * coma_text;
+	ComponentDefRec * component_def_onlyname;
 	// SemiColonText semi_colon_text;
-	DeclareNode * coma_node;
+	DeclareNode * node_def_rec;
 	ComponentType * component_type;
 	ParameterType * parameter_type;
 	Boolean * boolean;
@@ -27,7 +26,7 @@
 	ComponentDefRec * component_def_rec;
 	
 	Params * params;
-	ComaParameter * coma_parameter;
+	ComaParameter * parameter_def_rec;
 	Parameter * parameter;
 
 	// No-terminales (frontend).
@@ -38,10 +37,9 @@
 	int node_name;
 	int declaration;
 	int concat;
-	int end_of_line;
 	int declare_type;
-	int coma_text;
-	int coma_node;
+	int component_def_onlyname;
+	int node_def_rec;
 	int component_type;
 	int boolean;
 	int declare_node;
@@ -50,7 +48,7 @@
 	int component_def_rec;
 	
 	int params;
-	int coma_parameter;
+	int parameter_def_rec;
 	int parameter;
 	*/
 	
@@ -74,7 +72,7 @@
 %token <component_type> AMMETER
 %token <component_type> SINGLEPHASEVOL
 
-%token <coma_text> COMA
+%token <component_def_onlyname> COMA
 %token <token> EQUAL  // eeee ??
 
 %token <char> SEMICOLON //e?
@@ -104,13 +102,13 @@
 %type <program> program
 %type <declaration> declaration
 %type <declare_type> declare_type
-%type <coma_text> coma_text
-%type <coma_node> coma_node
+%type <component_def_onlyname> component_def_onlyname
+%type <node_def_rec> node_def_rec
 %type <component_def> component_def
 %type <component_def_rec> component_def_rec
 %type <component_type> component_type
 %type <params> params
-%type <coma_parameter> coma_parameter
+%type <parameter_def_rec> parameter_def_rec
 %type <parameter> parameter
 %type <boolean> boolean
 %type <declare_node> declare_node
@@ -119,7 +117,6 @@
 %type <node_name> node_name
 
 %type <concat> concat
-%type <end_of_line> end_of_line
 
 // Reglas de asociatividad y precedencia (de menor a mayor).
 // %left ADD SUB
@@ -133,18 +130,18 @@
 program: declaration												{ $$ = ProgramGrammarAction($1); }
 	;
 
-declaration: declare_type end_of_line declaration					{ $$ = DeclarationTypeGrammarAction($1, $3);	}
-	| declare_node end_of_line declaration							{ $$ = DeclarationNodeGrammarAction($1, $3);	}
-	| concat end_of_line declaration								{ $$ = DeclarationConcatGrammarAction($1, $3);	}
-	|																{ $$ = NULL; }
+declaration: declare_type SEMICOLON declaration						{ $$ = DeclarationTypeGrammarAction($1, $3);	}
+	| declare_node SEMICOLON declaration							{ $$ = DeclarationNodeGrammarAction($1, $3);	}
+	| concat SEMICOLON declaration									{ $$ = DeclarationConcatGrammarAction($1, $3);	}
+	| %empty														{ $$ = NULL; }
 	;
 
-declare_type: component_type coma_text									{ $$ = DeclareTypeGrammarAction($1, $2, NULL); 	}
+declare_type: component_type component_def_onlyname						{ $$ = DeclareTypeGrammarAction($1, $2, NULL); 	}
 	| component_type component_def params								{ $$ = DeclareTypeGrammarAction($1, $2, $3); 	}
 	;
 
-coma_text: component_name COMA coma_text								{ $$ = ComaTextGrammarAction($1, $3);	 }
-	| component_name													{ $$ = ComaTextGrammarAction($1, NULL);	 }
+component_def_onlyname: component_name COMA component_def_onlyname		{ $$ = ComponentDefGrammarAction($1, 0, $3);	 }
+	| component_name													{ $$ = ComponentDefGrammarAction($1, 0, NULL);	 }
 	;
 
 component_def: component_name component_def_rec constant CLOSE_BRACKET		{ $$= ComponentDefGrammarAction($1, $3, $2); }
@@ -164,11 +161,11 @@ component_type: RESISTOR											{ $$ = ComponentTypeResistorGrammarAction();	
 	| SINGLEPHASEVOL												{ $$ = ComponentTypeSinglePhaseVolGrammarAction(); }
 	;
 
-params: OPEN_PARENTHESIS coma_parameter CLOSE_PARENTHESIS			{ $$ = ParamsGrammarAction($2); }
-	|																{ $$ = NULL; }
+params: OPEN_PARENTHESIS parameter_def_rec CLOSE_PARENTHESIS		{ $$ = ParamsGrammarAction($2); }
+	| %empty														{ $$ = NULL; }
 	;
 
-coma_parameter: parameter COMA coma_parameter						{ $$ = ComaParameterGrammarAction($1, $3); 	}
+parameter_def_rec: parameter COMA parameter_def_rec					{ $$ = ComaParameterGrammarAction($1, $3); 	}
 	| parameter														{ $$ = ComaParameterGrammarAction($1, NULL);}
 	;
 
@@ -179,19 +176,16 @@ boolean: TRUE														{ $$ = BooleanTrueGrammarAction();	 }
 	| FALSE															{ $$ = BooleanFalseGrammarAction();	 }
 	;
 
-coma_node: COMA node_name coma_node									{ $$ = DeclareNodeGrammarAction($2, $3); }
-	|																{ $$ = NULL; }
+node_def_rec: COMA node_name node_def_rec							{ $$ = DeclareNodeGrammarAction($2, $3); }
+	| %empty														{ $$ = NULL; }
 	;
 
-declare_node: NODE node_name coma_node								{ $$ = DeclareNodeGrammarAction($2, $3); }
+declare_node: NODE node_name node_def_rec							{ $$ = DeclareNodeGrammarAction($2, $3); }
 	;
 
 concat: component_name GREATER_THAN concat							{ $$ = ConcatToGrammarAction($1, $3); }
 	| node_name ADD concat											{ $$ = ConcatPlusGrammarAction($1, $3); }
 	| component_name 												{ $$ = ConcatToGrammarAction($1, NULL); }
-	;
-
-end_of_line: SEMICOLON												{ $$ = NULL; }
 	;
 
 constant: INTEGER													{ $$ = ConstantIntegerGrammarAction($1); }

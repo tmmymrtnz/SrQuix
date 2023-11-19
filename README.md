@@ -1,7 +1,7 @@
 
-# Sirquix: circuit latex compiler
+# SrQuix: Circuit LaTeX compiler
 
-Un compilador vacío de ejemplo construido con Flex y Bison.
+Un constructor de circuitos en LaTeX con Flex y Bison.
 
 ## Requerimientos
 
@@ -44,7 +44,6 @@ capacitor C;
 node n1, n2;
 
 n1>C>L>a>r1>n2;
-
 ```
 
 Luego, ejecute el compilador desde el directorio raíz del proyecto, o desde cualquier otro lugar indicando el path hacia el script `start.sh` y pasando por parámetro el path hacia el programa a compilar:
@@ -59,7 +58,7 @@ En Windows:
 user@machine:path/ $ script\start.bat program
 ```
 
-Debería obtener el resultado correcto de evaluar el programa anterior: `122318`.
+Debería obtener el resultado correcto de evaluar el programa anterior: `0`, y la salida en un archivo en formato LaTeX llamado `SrQuix.tex`.
 
 ## Testing
 

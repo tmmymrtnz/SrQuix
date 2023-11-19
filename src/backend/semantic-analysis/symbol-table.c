@@ -155,7 +155,11 @@ void addParams(ComponentDefRec * component_def_rec, ComaParameter * coma_paramet
     }
     // if there were more parameters, then bison caught the error earlier. Currently there is only one parameter: showlabel
     // if we add more parameters, then we need to iterate through the coma_parameter list
-    addParam(component_def_rec, coma_parameter->parameter);
+    ComponentDefRec * current_component = component_def_rec;
+    while (current_component != NULL) {
+        addParam(current_component, coma_parameter->parameter);
+        current_component = current_component->component_def_rec;
+    }
 }
 
 void addComponent(ComponentDefRec * component, ComponentType * component_type) {
@@ -379,7 +383,7 @@ int checkUnlinked() {
         component_t * current_component = (component_t *)current->data;
         if (current_component->prev == NULL || current_component->next == NULL) {
             unlinkedCount++;
-            addUnlinked("Component unlinked in one or more directions", current_component->component_name);
+            addUnlinked("Missing link in one or more directions", current_component->component_name);
         }
         current = current->next;
     }

@@ -62,14 +62,14 @@ struct ComaParameter{
 typedef struct ComponentDefRec ComponentDefRec;
 
 struct ComponentDefRec{
-	const char * component_name;
+	char * component_name;
 	float constant;
 
 	ComponentDefRec * component_def_rec;
 };
 
 typedef struct {
-	const ComaParameter * coma_parameter;
+	ComaParameter * coma_parameter;
 } Params;
 
 typedef struct {
