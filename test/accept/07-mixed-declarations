@@ -1,0 +1,8 @@
+resistor r1, r2;
+node n1, n2;
+
+n1>r1>r2>n2;
+
+lamp l1;
+
+n1>l1>n2;

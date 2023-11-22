@@ -326,6 +326,22 @@ void concatNodes(char * fromNodeName, char * toNodeName){
     
 }
 
+void assignValuesToNames(ComponentDefRec * component_def_names, ComponentDefRec * component_def_values) {
+    ComponentDefRec * current_name = component_def_names;
+    ComponentDefRec * current_value = component_def_values;
+    
+    while (current_name != NULL && current_value != NULL) {
+        current_name->constant = current_value->constant;
+
+        current_name = current_name->component_def_rec;
+        current_value = current_value->component_def_rec;
+    }
+
+    if (current_name != NULL || current_value != NULL) {
+        addError("Mismatching component name - value", component_def_names->component_name);
+    }
+}
+
 void addError(char * errorMessage, char * object_name) {
     error_t * new_error = (error_t *)malloc(sizeof(error_t));
     new_error->error_message = (char*)malloc(strlen(errorMessage) + 1);

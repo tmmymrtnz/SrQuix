@@ -1,1 +1,3 @@
+resistor resi1, resi2;
+
 resi1>resi2>;

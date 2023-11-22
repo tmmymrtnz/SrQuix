@@ -23,7 +23,7 @@
 	DeclareNode * declare_node;
 
 	ComponentDefRec * component_def;
-	ComponentDefRec * component_def_rec;
+	ComponentDefRec * constant_def_rec;
 	
 	Params * params;
 	ComaParameter * parameter_def_rec;
@@ -105,7 +105,7 @@
 %type <component_def_onlyname> component_def_onlyname
 %type <node_def_rec> node_def_rec
 %type <component_def> component_def
-%type <component_def_rec> component_def_rec
+%type <constant_def_rec> constant_def_rec
 %type <component_type> component_type
 %type <params> params
 %type <parameter_def_rec> parameter_def_rec
@@ -140,15 +140,15 @@ declare_type: component_type component_def_onlyname						{ $$ = DeclareTypeGramm
 	| component_type component_def params								{ $$ = DeclareTypeGrammarAction($1, $2, $3); 	}
 	;
 
-component_def_onlyname: component_name COMA component_def_onlyname		{ $$ = ComponentDefGrammarAction($1, 0, $3);	 }
-	| component_name													{ $$ = ComponentDefGrammarAction($1, 0, NULL);	 }
+component_def_onlyname: component_name COMA component_def_onlyname		{ $$ = ComponentNameRecGrammarAction($1, $3);	 }
+	| component_name													{ $$ = ComponentNameRecGrammarAction($1, NULL);	 }
 	;
 
-component_def: component_name component_def_rec constant CLOSE_BRACKET		{ $$= ComponentDefGrammarAction($1, $3, $2); }
+component_def: component_def_onlyname EQUAL OPEN_BRACKET constant_def_rec CLOSE_BRACKET		{ $$= ComponentDefGrammarAction($1, $4); }
 	;
 
-component_def_rec: COMA component_name component_def_rec constant COMA		{ $$= ComponentDefGrammarAction($2, $4, $3); }
-	|  EQUAL OPEN_BRACKET													{ $$= NULL; }
+constant_def_rec: constant COMA constant_def_rec						{ $$ = ConstantRecGrammarAction($1, $3);	 }
+	| constant															{ $$ = ConstantRecGrammarAction($1, NULL);	 }
 	;
 
 component_type: RESISTOR											{ $$ = ComponentTypeResistorGrammarAction();	}

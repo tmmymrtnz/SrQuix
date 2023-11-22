@@ -143,12 +143,23 @@ DeclareType * DeclareTypeGrammarAction(ComponentType * componentType, ComponentD
 }
 
 
-ComponentDefRec * ComponentDefGrammarAction(char * componentName, const float value, ComponentDefRec * component_def_rec){
+ComponentDefRec * ComponentNameRecGrammarAction(char * componentName, ComponentDefRec * component_def_rec){
 	ComponentDefRec * new_component_def_rec = (ComponentDefRec *) malloc(sizeof(ComponentDefRec));
 	new_component_def_rec->component_name = componentName;
+	new_component_def_rec->component_def_rec = component_def_rec;
+	return new_component_def_rec;
+}
+
+ComponentDefRec * ConstantRecGrammarAction(const float value, ComponentDefRec * component_def_rec) {
+	ComponentDefRec * new_component_def_rec = (ComponentDefRec *) malloc(sizeof(ComponentDefRec));
 	new_component_def_rec->constant = value;
 	new_component_def_rec->component_def_rec = component_def_rec;
 	return new_component_def_rec;
+}
+
+ComponentDefRec * ComponentDefGrammarAction(ComponentDefRec * component_def_names, ComponentDefRec * component_def_values) {
+	assignValuesToNames(component_def_names, component_def_values);
+	return component_def_names;
 }
 
 

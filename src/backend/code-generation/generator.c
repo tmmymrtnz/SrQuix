@@ -76,7 +76,7 @@ char * goRight() {
 }
 
 void closeComponent(FILE * filePointer) {
-	fprintf(filePointer,"\n\t\\draw %s -- (%d,%d) -- (%d,%d) -- (0,0);", current_coord, x, y-2, 0, y-2);
+	fprintf(filePointer,"\n\t\\draw %s -- (%d,%d) -- (0,%d) -- (0,%d);", current_coord, x, y-2, y-2, y);
 }
 
 void generateComponentList(Node * component_node, FILE * filePointer) {
@@ -126,7 +126,32 @@ void generateComponent(component_t *component, FILE *filePointer) {
 }
 
 
+component_t * visited_components[4];
+int visit_count = 0;
 
+// Solo aplica para el caso prev y next son el mismo nodo
+int visitComponent(component_t * component) {
+	for(int i = 0; i < 4; i++) {
+		if (visited_components[i] == NULL) {
+			visited_components[i] = component;
+			visit_count++;
+			return 1;
+		} 
+		
+		if (visited_components[i] == component) {
+			return 0;
+		}
+	}
+
+	return -1;
+}
+
+void resetVisits() {
+	for(int i = 0; i < 4; i++) {
+		visited_components[i] = NULL;
+	}
+	visit_count = 0;
+}
 
 void Generator(int result, symbol_t * symbolTable) {
 	LogInfo("La expresion genera un circuito valido. Compilacion terminada con codigo: '%d'.", result);
@@ -164,11 +189,14 @@ void Generator(int result, symbol_t * symbolTable) {
 	}
 
 	while (current_node != NULL) {
+		int reg_prev_and_next = 0;
 		for (int i = 0; i < 4; i++){
 			if (		((node_t *)current_node->data)->dir[i] != NULL &&
 						((node_t *)current_node->data)->dir_type[i] == COMPONENT_TYPE && 
-						((component_t *)((node_t *)current_node->data)->dir[i])->next_type == COMPONENT_TYPE) 
+						((component_t *)((node_t *)current_node->data)->dir[i])->prev == (node_t *)current_node->data &&
+						visitComponent((component_t *)((node_t *)current_node->data)->dir[i])) 
 				{
+
 				line_count++;
 				circuit_lines[current_line].start_node = (node_t *)current_node->data;
 				circuit_lines[current_line].start_coords.x = x;
@@ -195,6 +223,11 @@ void Generator(int result, symbol_t * symbolTable) {
 				circuit_lines[current_line].end_coords.y = y;
 
 				fprintf(filePointer,"\n\t\tnode[circ, label={above: %s}] {};", circuit_lines[current_line].end_node->name );
+
+				if (visit_count == 1) {
+					closeComponent(filePointer);
+					y -= 2;
+				}
 
 				x = 0;
 				y -= 2;
@@ -235,6 +268,7 @@ void Generator(int result, symbol_t * symbolTable) {
 		}
 
 		current_node = current_node->next;
+		resetVisits();
 	}
 
 	connectNodes(circuit_lines, current_line, filePointer);

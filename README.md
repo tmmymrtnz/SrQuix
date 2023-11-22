@@ -75,3 +75,18 @@ user@machine:path/ $ script\test.bat
 ```
 
 Si desea agregar nuevos casos de uso, deberá crear un archivo por cada uno, que contenga el programa a testear dentro de las carpetas `test/accept` o `test/reject` según corresponda (es decir, si el mismo debe ser aceptado o rechazado por el compilador).
+
+## Componentes válidos
+
+A continuación se encuentran los componentes soportados en la versión:
+
+```
+resistor
+battery
+inductor
+capacitor
+ammeter
+voltmeter
+lamp                          
+generic
+```

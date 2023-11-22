@@ -1,0 +1,4 @@
+resistor r1 = [4](showName = false);
+node n1;
+
+n1>r1>n1;

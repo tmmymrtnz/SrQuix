@@ -68,6 +68,8 @@ void concatNodes(char * fromNodeName, char * toNodeName);
 
 void addParams(ComponentDefRec * component_def_rec, ComaParameter * coma_parameter);
 
+void assignValuesToNames(ComponentDefRec * component_def_names, ComponentDefRec * component_def_values);
+
 symbol_t * getSymbolTable();
 
 void printErrors();

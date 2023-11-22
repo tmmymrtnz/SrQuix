@@ -1,1 +1,4 @@
 resistor r1 = [thirty];
+node n1;
+
+n1>r1>n1;

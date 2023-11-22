@@ -23,7 +23,9 @@ Declaration * DeclarationConcatGrammarAction(const Concat * concat, const Declar
 
 DeclareType * DeclareTypeGrammarAction(ComponentType * componentType, ComponentDefRec * component_def_rec, const Params * params);
 
-ComponentDefRec * ComponentDefGrammarAction(char * componentName, const float value, ComponentDefRec * component_def_rec);
+ComponentDefRec * ComponentNameRecGrammarAction(char * componentName, ComponentDefRec * component_def_rec);
+ComponentDefRec * ConstantRecGrammarAction(const float value, ComponentDefRec * component_def_rec);
+ComponentDefRec * ComponentDefGrammarAction(ComponentDefRec * component_def_names, ComponentDefRec * component_def_values);
 
 ComponentType * ComponentTypeResistorGrammarAction();
 ComponentType * ComponentTypeBatteryGrammarAction();
