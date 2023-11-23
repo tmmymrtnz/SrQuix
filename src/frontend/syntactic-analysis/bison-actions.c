@@ -1,4 +1,3 @@
-#include "../../backend/domain-specific/calculator.h"
 #include "../../backend/support/logger.h"
 #include "bison-actions.h"
 #include <stdio.h>
@@ -243,43 +242,3 @@ float ConstantRealGrammarAction(const float value){
 char * ComponentNameGrammarAction(char * componentName){
     return componentName;
 }
-
-// int AdditionExpressionGrammarAction(const int leftValue, const int rightValue) {
-// 	LogDebug("[Bison] AdditionExpressionGrammarAction(%d, %d)", leftValue, rightValue);
-// 	return Add(leftValue, rightValue);
-// }
-
-// int SubtractionExpressionGrammarAction(const int leftValue, const int rightValue) {
-// 	LogDebug("[Bison] SubtractionExpressionGrammarAction(%d, %d)", leftValue, rightValue);
-// 	return Subtract(leftValue, rightValue);
-// }
-
-// int MultiplicationExpressionGrammarAction(const int leftValue, const int rightValue) {
-// 	LogDebug("[Bison] MultiplicationExpressionGrammarAction(%d, %d)", leftValue, rightValue);
-// 	return Multiply(leftValue, rightValue);
-// }
-
-// int DivisionExpressionGrammarAction(const int leftValue, const int rightValue) {
-// 	LogDebug("[Bison] DivisionExpressionGrammarAction(%d, %d)", leftValue, rightValue);
-// 	return Divide(leftValue, rightValue);
-// }
-
-// int FactorExpressionGrammarAction(const int value) {
-// 	LogDebug("[Bison] FactorExpressionGrammarAction(%d)", value);
-// 	return value;
-// }
-
-// int ExpressionFactorGrammarAction(const int value) {
-// 	LogDebug("[Bison] ExpressionFactorGrammarAction(%d)", value);
-// 	return value;
-// }
-
-// int ConstantFactorGrammarAction(const int value) {
-// 	LogDebug("[Bison] ConstantFactorGrammarAction(%d)", value);
-// 	return value;
-// }
-
-// int IntegerConstantGrammarAction(const int value) {
-// 	LogDebug("[Bison] IntegerConstantGrammarAction(%d)", value);
-// 	return value;
-// }

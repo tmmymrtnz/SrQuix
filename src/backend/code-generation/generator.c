@@ -224,7 +224,7 @@ void Generator(int result, symbol_t * symbolTable) {
 
 				fprintf(filePointer,"\n\t\tnode[circ, label={above: %s}] {};", circuit_lines[current_line].end_node->name );
 
-				if (visit_count == 1) {
+				if ((node_t *)current_component->next == (node_t *)current_node->data) {
 					closeComponent(filePointer);
 					y -= 2;
 				}

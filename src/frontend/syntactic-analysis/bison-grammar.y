@@ -73,9 +73,9 @@
 %token <component_type> GENERIC_COMP
 
 %token <component_def_onlyname> COMA
-%token <token> EQUAL  // eeee ??
+%token <token> EQUAL
 
-%token <char> SEMICOLON //e?
+%token <char> SEMICOLON
 
 %token <declare_node> NODE
 
@@ -117,10 +117,6 @@
 %type <node_name> node_name
 
 %type <concat> concat
-
-// Reglas de asociatividad y precedencia (de menor a mayor).
-// %left ADD SUB
-// %left MUL DIV
 
 // El símbolo inicial de la gramatica.
 %start program

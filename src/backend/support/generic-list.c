@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "generic-list.h" // Include the header file
+#include "generic-list.h"
 
 // Function to initialize a list
 List* initList() {
